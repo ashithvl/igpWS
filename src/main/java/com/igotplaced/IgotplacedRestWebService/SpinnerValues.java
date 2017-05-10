@@ -15,15 +15,15 @@ public class SpinnerValues {
 	@Path("/yearofpassout")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getYearOfPassOut() {
-		String yearOfPassOutArray[] = { "'--Select the Passout Year--'", "'2025'", "'2024'", "'2023'", "'2022'", "'2021'", "'2020'",
-				"'2019'", "'2018'", "'2017'", "'2016'", "'2015'", "'2014'" };
+		String yearOfPassOutArray[] = { "'--Select the Passout Year--'", "'2025'", "'2024'", "'2023'", "'2022'",
+				"'2021'", "'2020'", "'2019'", "'2018'", "'2017'", "'2016'", "'2015'", "'2014'" };
 		ArrayList<String> yearOfPassOutArrayList = new ArrayList<String>();
 		for (String arraylist : yearOfPassOutArray) {
 			yearOfPassOutArrayList.add(arraylist);
 		}
 		return yearOfPassOutArrayList.toString();
 	}
-    
+
 	@GET
 	@Path("/company")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -35,17 +35,21 @@ public class SpinnerValues {
 		}
 		return yearOfPassOutArrayList.toString();
 	}
-	
+
 	@GET
 	@Path("/industry")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getIndustry() {
-		String yearOfPassOutArray[] = { "--Select the Passout Year--", "2025", "2024" };
-		ArrayList<String> yearOfPassOutArrayList = new ArrayList<String>();
-		for (String arraylist : yearOfPassOutArray) {
-			yearOfPassOutArrayList.add(arraylist);
+		String[] industryDisplay = { "All Industries", "ACCOUNTING", "APPAREL AND  FASHION", "KPMG IMPACT", "INTERNET",
+				"AUTOMOTIVE", "BANKING", "CONSULTING", "E-COMMERCE", "EDUCATION", "E-LEARNING", "FINANCIAL SERVICES",
+				"FMCG", "FOOD AND BEVERAGES", "FURNITURE", "HEALTHCARE", "HOSPITALITY AND TOURISM",
+				"INVESTMENT BANKING", "IT INDUSTRY", "LOGISTICS AND SUPPLY CHAIN", "MARKETING AND ADVERTISING",
+				"REAL ESTATE", "RETAIL", "TELECOMMUNICATIONS", "VENTURE CAPITAL AND PRIVATE EQUITY", "MECHANICAL" };
+		ArrayList<String> industryDisplayArrayList = new ArrayList<String>();
+		for (String arraylist : industryDisplay) {
+			industryDisplayArrayList.add(arraylist);
 		}
-		return yearOfPassOutArrayList.toString();
+		return industryDisplayArrayList.toString();
 	}
-	
+
 }
