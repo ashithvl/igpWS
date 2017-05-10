@@ -1,12 +1,17 @@
 package com.igotplaced.IgotplacedRestWebService;
 
-import java.awt.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import utils.IndustryCompany;
 
 @Path("/spinner")
 public class SpinnerValues {
@@ -15,8 +20,8 @@ public class SpinnerValues {
 	@Path("/yearofpassout")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getYearOfPassOut() {
-		String yearOfPassOutArray[] = { "'--Select the Passout Year--'", "'2025'", "'2024'", "'2023'", "'2022'",
-				"'2021'", "'2020'", "'2019'", "'2018'", "'2017'", "'2016'", "'2015'", "'2014'" };
+		String yearOfPassOutArray[] = { "--Select the Passout Year--", "2025", "2024", "2023", "2022", "2021", "2020",
+				"2019", "2018", "2017", "2016", "2015", "2014" };
 		ArrayList<String> yearOfPassOutArrayList = new ArrayList<String>();
 		for (String arraylist : yearOfPassOutArray) {
 			yearOfPassOutArrayList.add(arraylist);
@@ -40,16 +45,65 @@ public class SpinnerValues {
 	@Path("/industry")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getIndustry() {
-		String[] industryDisplay = { "All Industries", "ACCOUNTING", "APPAREL AND  FASHION", "KPMG IMPACT", "INTERNET",
+
+		IndustryCompany industryCompany = new IndustryCompany();
+
+		String[] industry = { "All Industries", "ACCOUNTING", "APPAREL AND  FASHION", "KPMG IMPACT", "INTERNET",
 				"AUTOMOTIVE", "BANKING", "CONSULTING", "E-COMMERCE", "EDUCATION", "E-LEARNING", "FINANCIAL SERVICES",
 				"FMCG", "FOOD AND BEVERAGES", "FURNITURE", "HEALTHCARE", "HOSPITALITY AND TOURISM",
 				"INVESTMENT BANKING", "IT INDUSTRY", "LOGISTICS AND SUPPLY CHAIN", "MARKETING AND ADVERTISING",
 				"REAL ESTATE", "RETAIL", "TELECOMMUNICATIONS", "VENTURE CAPITAL AND PRIVATE EQUITY", "MECHANICAL" };
+
 		ArrayList<String> industryDisplayArrayList = new ArrayList<String>();
-		for (String arraylist : industryDisplay) {
+		for (String arraylist : industry) {
 			industryDisplayArrayList.add(arraylist);
 		}
-		return industryDisplayArrayList.toString();
+
+		String yearOfPassOutArray[] = { "--Select the Passout Year--", "2025", "2024", "2023", "2022", "2021", "2020",
+				"2019", "2018", "2017", "2016", "2015", "2014" };
+		ArrayList<String> yearOfPassOutArrayList = new ArrayList<String>();
+		for (String arraylist : yearOfPassOutArray) {
+			yearOfPassOutArrayList.add(arraylist);
+		}
+
+		JSONArray industryJSONArray = new JSONArray(Arrays.asList(industry));
+
+		JSONArray companyJSONArray = new JSONArray(Arrays.asList(yearOfPassOutArray));
+
+		JSONObject jsonObject = new JSONObject();
+		
+		jsonObject.put("industry", (Object) industryJSONArray);
+
+		jsonObject.put("company", (Object) companyJSONArray);
+
+		/*
+		 * industryCompany.setIndustry(industryDisplayArrayList.toString());
+		 * 
+		 * industryCompany.setCompany(yearOfPassOutArrayList.toString());
+		 * 
+		 * Map<String, Object> map = new TreeMap<String, Object>();
+		 * 
+		 * map.put("industry", industryCompany.getIndustry());
+		 * 
+		 * map.put("company", industryCompany.getCompany());
+		 * 
+		 * JSONObject jsonObject = new JSONObject();
+		 * 
+		 * Iterator it = map.entrySet().iterator(); while (it.hasNext()) {
+		 * Map.Entry pairs = (Map.Entry) it.next();
+		 * jsonObject.put(pairs.getKey(), pairs.getValue()); }
+		 */
+
+		/*
+		 * Map<String, Object> map = new TreeMap<String, Object>();
+		 * 
+		 * map.put("industry", industryJSONArray);
+		 * 
+		 * map.put("company", companyJSONArray);
+		 */
+
+		return jsonObject.toString();
+
 	}
 
 }
