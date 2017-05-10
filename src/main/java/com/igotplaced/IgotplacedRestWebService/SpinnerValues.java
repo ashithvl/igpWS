@@ -23,7 +23,7 @@ public class SpinnerValues {
 		}
 		return yearOfPassOutArrayList.toString();
 	}
-
+ 
 	@GET
 	@Path("/company")
 	@Produces(MediaType.APPLICATION_JSON)
