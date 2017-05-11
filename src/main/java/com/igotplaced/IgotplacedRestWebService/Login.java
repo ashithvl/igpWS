@@ -1,7 +1,6 @@
 package com.igotplaced.IgotplacedRestWebService;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -32,7 +31,7 @@ public class Login {
 	        	
 	            PreparedStatement ps = con.prepareStatement("SELECT * FROM user_login WHERE email=? AND password=? AND status='0'");
 	            ps.setString(1, email);
-	            ps.setString(2, password);
+	            ps.setString(2, Constants.md5(password));
 	            
 	            ResultSet rs = ps.executeQuery();
 	            
