@@ -38,7 +38,7 @@ public class Login {
 	            if(rs.next()){
 	                result = "true";
 	            } 
-	             
+	              
 	            con.close();
 	        }
 	        catch(Exception e){
