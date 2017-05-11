@@ -3,6 +3,8 @@ package com.igotplaced.IgotplacedRestWebService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -36,8 +38,23 @@ public class Login {
 	            ResultSet rs = ps.executeQuery();
 	            
 	            if(rs.next()){
+	                
+	                String userid = rs.getString("id");
+	                
+	                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+	                LocalDateTime now = LocalDateTime.now();
+	                
+	                String dateTime = dtf.format(now);
+	                PreparedStatement psInner = con.prepareStatement("UPDATE user_login SET last_loggedin = ? where id=?");
+	                psInner.setString(1, dateTime);
+	                psInner.setString(2, userid);
+	                
+	                psInner.executeQuery();
+ 
 	                result = "true";
-	            } 
+	            }else{
+	            	result="false";
+	            }
 	              
 	            con.close();
 	        }
