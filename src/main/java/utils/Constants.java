@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 
 public class Constants {
 
-	final static String url = "jdbc:mysql://localhost:3306/wslogin";
+	final static String url = "jdbc:mysql://localhost:3306/cogentin_igotplaced";
     final static String user = "root";
     final static String pass = "";
     static Connection con = null;

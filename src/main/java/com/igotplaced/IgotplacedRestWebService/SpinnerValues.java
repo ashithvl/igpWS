@@ -76,32 +76,6 @@ public class SpinnerValues {
 
 		jsonObject.put("company", (Object) companyJSONArray);
 
-		/*
-		 * industryCompany.setIndustry(industryDisplayArrayList.toString());
-		 * 
-		 * industryCompany.setCompany(yearOfPassOutArrayList.toString());
-		 * 
-		 * Map<String, Object> map = new TreeMap<String, Object>();
-		 * 
-		 * map.put("industry", industryCompany.getIndustry());
-		 * 
-		 * map.put("company", industryCompany.getCompany());
-		 * 
-		 * JSONObject jsonObject = new JSONObject();
-		 * 
-		 * Iterator it = map.entrySet().iterator(); while (it.hasNext()) {
-		 * Map.Entry pairs = (Map.Entry) it.next();
-		 * jsonObject.put(pairs.getKey(), pairs.getValue()); }
-		 */
-
-		/*
-		 * Map<String, Object> map = new TreeMap<String, Object>();
-		 * 
-		 * map.put("industry", industryJSONArray);
-		 * 
-		 * map.put("company", companyJSONArray);
-		 */
-
 		return jsonObject.toString();
 
 	}
