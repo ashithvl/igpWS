@@ -53,12 +53,14 @@ public class Register {
 			} else {
 				
 
+				String defaultValue = "";
+				
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 				LocalDateTime now = LocalDateTime.now(); 
-				String dateTime = dtf.format(now);
+				String dateTime = dtf.format(now); 
 				
-				String sqlInner = "INSERT INTO user_login (fname, email, passout, college, department, interest, created_by, modified_by) VALUES("
-						+name+",'"+email+"', "+year+","+colg+", "+dept+","+Integer.parseInt(check)+", '"+dateTime+"','"+dateTime+"')";
+				String sqlInner = "INSERT INTO user_login (id, fname, event_admin, email, password, passout, college, department, imgname, industry1, industry2, industry3, company1, company2, company3, phone, status, interview_status, location, interest, intw_schedule, assessment, created_by, last_loggedin, created_user, modified_by, modified_user) "
+						+ "VALUES('"+name+"','"+defaultValue+"','"+email+"','"+defaultValue+"','"+year+"','"+colg+"','"+dept+"','"+defaultValue+"','"+Integer.parseInt(check)+"', '"+dateTime+"','"+dateTime+"')";
 
 
 				PreparedStatement psInner = con.prepareStatement(sqlInner);
