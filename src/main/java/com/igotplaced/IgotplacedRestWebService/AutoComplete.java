@@ -18,12 +18,15 @@ import org.json.JSONArray;
 
 import utils.Constants;
 
-@Path("/autocompleteService")
+@Path("/autoCompleteService")
 public class AutoComplete {
 	Connection con = null;
 
 	List<String> colgList = new ArrayList<>();
-	JSONArray companyJSONArray = null;
+	JSONArray colgJSONArray = null;
+	
+	List<String> deptList = new ArrayList<>();
+	JSONArray deptJSONArray = null;
 	
 	@GET
 	@Path("/searchCollege")
@@ -47,7 +50,7 @@ public class AutoComplete {
 			}
 			String[] colg = colgList.toArray(new String[colgList.size()]);
 			
-			companyJSONArray = new JSONArray(Arrays.asList(colg));
+			colgJSONArray = new JSONArray(Arrays.asList(colg));
 		
 			con.close();
 
@@ -55,6 +58,40 @@ public class AutoComplete {
 			e.printStackTrace();
 		}
 
-		return companyJSONArray.toString();
+		return colgJSONArray.toString();
 	}
+	
+	@GET
+	@Path("/searchDepartment")
+	@Produces(MediaType.TEXT_HTML)
+	public String searchDepartment() {
+
+		try {
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "select DISTINCT courses from courses";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				
+				deptList.add(rs.getString("courses"));
+				
+			}
+			String[] colg = deptList.toArray(new String[deptList.size()]);
+			
+			deptJSONArray = new JSONArray(Arrays.asList(colg));
+		
+			con.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return deptJSONArray.toString();
+	}
+	
 }
