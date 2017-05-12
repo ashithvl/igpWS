@@ -32,8 +32,8 @@ public class Register {
 			@FormParam("check") String check) {
 
 		int result = 0;
-		int rsLastGeneratedAutoIncrementId = 0; 
-		
+		int rsLastGeneratedAutoIncrementId = 0;
+
 		try {
 
 			con = Constants.ConnectionOpen();
@@ -45,44 +45,44 @@ public class Register {
 
 			ResultSet rs = ps.executeQuery();
 
-			
 			if (rs.next()) {
-				
+
 				return String.valueOf(result);
-				
+
 			} else {
-				
 
 				String defaultValue = "";
-				
+				int defaultValueInt = 0;
+
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-				LocalDateTime now = LocalDateTime.now(); 
-				String dateTime = dtf.format(now); 
-				
+				LocalDateTime now = LocalDateTime.now();
+				String dateTime = dtf.format(now);
+
+				String dateInString = "0000-00-00 00:00:00";
+
 				String sqlInner = "INSERT INTO user_login (fname, event_admin, email, password, passout, college, department, imgname, industry1, industry2, industry3, company1, company2, company3, phone, status, interview_status, location, interest, intw_schedule, assessment, created_by, last_loggedin, created_user, modified_by, modified_user) "
-						+ "VALUES('"+name+"','"+defaultValue+"','"+email+"','"+defaultValue+"','"+year+"','"+colg+"','"+dept+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+defaultValue+"','"+Integer.parseInt(check)+"','"+defaultValue+"','"+defaultValue+"', '"+dateTime+"','"+defaultValue+"','"+defaultValue+"','"+dateTime+"','"+defaultValue+"')";
+						+ "VALUES('" + name + "'," + defaultValueInt + ",'" + email + "','" + defaultValue + "','"
+						+ year + "','" + colg + "','" + dept + "','" + defaultValue + "','" + defaultValue + "','"
+						+ defaultValue + "','" + defaultValue + "','" + defaultValue + "','" + defaultValue + "','"
+						+ defaultValue + "','" + defaultValue + "'," + defaultValueInt + "," + defaultValueInt + ",'"
+						+ defaultValue + "','" + Integer.parseInt(check) + "'," + defaultValueInt + ","
+						+ defaultValueInt + ", '" + dateTime + "','" + dateInString + "','" + defaultValue + "','"
+						+ dateTime + "','" + defaultValue + "')";
 
+				PreparedStatement psInner = con.prepareStatement(sqlInner, Statement.RETURN_GENERATED_KEYS);
 
-				PreparedStatement psInner = con.prepareStatement(sqlInner);
-				/*psInner.setString(1, name);
-				psInner.setString(2, email);
-				psInner.setString(3, year);
-				psInner.setString(4, colg);
-				psInner.setString(5, dept);
-				psInner.setInt(6, Integer.parseInt(check));
-				psInner.setString(7, dateTime);
-				psInner.setString(8, dateTime);*/
-				
 				psInner.executeUpdate();
 				ResultSet rsInner = psInner.getGeneratedKeys();
-				
-				if(rsInner.next()){
+
+				if (rsInner.next()) {
 					rsLastGeneratedAutoIncrementId = rsInner.getInt(1);
 				}
-				
 
-				
-				/*int rsLastGeneratedAutoIncrementId = psInner.executeUpdate(sqlInner, Statement.RETURN_GENERATED_KEYS);*/
+				/*
+				 * int rsLastGeneratedAutoIncrementId =
+				 * psInner.executeUpdate(sqlInner,
+				 * Statement.RETURN_GENERATED_KEYS);
+				 */
 
 				result = rsLastGeneratedAutoIncrementId;
 
