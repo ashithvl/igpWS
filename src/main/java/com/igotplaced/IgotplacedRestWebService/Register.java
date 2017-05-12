@@ -78,12 +78,6 @@ public class Register {
 					rsLastGeneratedAutoIncrementId = rsInner.getInt(1);
 				}
 
-				/*
-				 * int rsLastGeneratedAutoIncrementId =
-				 * psInner.executeUpdate(sqlInner,
-				 * Statement.RETURN_GENERATED_KEYS);
-				 */
-
 				result = rsLastGeneratedAutoIncrementId;
 
 			}
