@@ -49,13 +49,11 @@ public class Login {
 	                psInner.setString(1, dateTime);
 	                psInner.setString(2, userid);
 	                
-	                psInner.executeQuery();
- 
+	                psInner.executeUpdate();
+	                
 	                result = "true";
-	            }else{
-	            	result="false";
+ 
 	            }
-	              
 	            con.close();
 	        }
 	        catch(Exception e){
