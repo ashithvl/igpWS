@@ -1,21 +1,33 @@
 package com.igotplaced.IgotplacedRestWebService;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import utils.IndustryCompany;
+import utils.Constants;
 
 @Path("/spinner")
 public class SpinnerValues {
 
+	Connection con = null;
+
+	List<String> industryList = new ArrayList<>();
+	JSONArray industryJSONArray = null;
+
+	List<String> companyList = new ArrayList<>();
+	JSONArray companyJSONArray = null;
+	
 	@GET
 	@Path("/yearofpassout")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -24,58 +36,78 @@ public class SpinnerValues {
 				"2019", "2018", "2017", "2016", "2015", "2014" };
 
 		JSONArray companyJSONArray = new JSONArray(Arrays.asList(yearOfPassOutArray));
-		
+
 		return companyJSONArray.toString();
 	}
 
 	@GET
-	@Path("/company")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getCompany() {
-		String yearOfPassOutArray[] = { "--Select the Passout Year--", "2025", "2024" };
-		ArrayList<String> yearOfPassOutArrayList = new ArrayList<String>();
-		for (String arraylist : yearOfPassOutArray) {
-			yearOfPassOutArrayList.add(arraylist);
+	@Path("/company/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String getCompany(@PathParam("id") String id) {
+
+		try {
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "select companyname from company where industryname LIKE '%" + id + "%' LIMIT 5";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				companyList.add(rs.getString("companyname"));
+
+			}
+			String[] company = companyList.toArray(new String[companyList.size()]);
+
+			companyJSONArray = new JSONArray(Arrays.asList(company));
+
+			con.close();
+
+		} catch (Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
 		}
-		return yearOfPassOutArrayList.toString();
+
+		return companyJSONArray.toString();
 	}
 
 	@GET
 	@Path("/industry")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_HTML)
 	public String getIndustry() {
 
-		IndustryCompany industryCompany = new IndustryCompany();
+		try {
 
-		String[] industry = { "All Industries", "ACCOUNTING", "APPAREL AND  FASHION", "KPMG IMPACT", "INTERNET",
-				"AUTOMOTIVE", "BANKING", "CONSULTING", "E-COMMERCE", "EDUCATION", "E-LEARNING", "FINANCIAL SERVICES",
-				"FMCG", "FOOD AND BEVERAGES", "FURNITURE", "HEALTHCARE", "HOSPITALITY AND TOURISM",
-				"INVESTMENT BANKING", "IT INDUSTRY", "LOGISTICS AND SUPPLY CHAIN", "MARKETING AND ADVERTISING",
-				"REAL ESTATE", "RETAIL", "TELECOMMUNICATIONS", "VENTURE CAPITAL AND PRIVATE EQUITY", "MECHANICAL" };
+			con = Constants.ConnectionOpen();
 
-		ArrayList<String> industryDisplayArrayList = new ArrayList<String>();
-		for (String arraylist : industry) {
-			industryDisplayArrayList.add(arraylist);
+			String sql = "SELECT * FROM industry WHERE status=0";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				industryList.add(rs.getString("industry_type"));
+
+			}
+			String[] industry = industryList.toArray(new String[industryList.size()]);
+
+			industryJSONArray = new JSONArray(Arrays.asList(industry));
+
+			con.close();
+
+		} catch (Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
 		}
 
-		String yearOfPassOutArray[] = { "--Select the Passout Year--", "2025", "2024", "2023", "2022", "2021", "2020",
-				"2019", "2018", "2017", "2016", "2015", "2014" };
-		ArrayList<String> yearOfPassOutArrayList = new ArrayList<String>();
-		for (String arraylist : yearOfPassOutArray) {
-			yearOfPassOutArrayList.add(arraylist);
-		}
-
-		JSONArray industryJSONArray = new JSONArray(Arrays.asList(industry));
-
-		JSONArray companyJSONArray = new JSONArray(Arrays.asList(yearOfPassOutArray));
-
-		JSONObject jsonObject = new JSONObject();
-		
-		jsonObject.put("industry", (Object) industryJSONArray);
-
-		jsonObject.put("company", (Object) companyJSONArray);
-
-		return jsonObject.toString();
+		return industryJSONArray.toString();
 
 	}
 

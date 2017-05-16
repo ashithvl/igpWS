@@ -90,5 +90,64 @@ public class Register {
 
 		return String.valueOf(result);
 	}
+	
+	@POST
+	@Path("/registerPassword")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_HTML)
+	public String register(@FormParam("id") String id, @FormParam("password") String password,
+			@FormParam("industry1") String industry1, @FormParam("industry2") String industry2, @FormParam("industry3") String industry3,
+			@FormParam("company1") String company1, @FormParam("company2") String company2, @FormParam("company3") String company3,
+			@FormParam("phone") String phone,@FormParam("interest") String interest,@FormParam("location") String location,@FormParam("last_loggedin") String last_loggedin) {
+
+		int result = 0;
+
+		try {
+
+			con = Constants.ConnectionOpen();
+			
+			String sql = "SELECT * FROM `user_login` WHERE password!='' AND id=?";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, id);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.getRow()>0) {
+
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+				LocalDateTime now = LocalDateTime.now();
+				String dateTime = dtf.format(now);
+
+				String sqlInner = "UPDATE `user_login` SET password=?,industry1=?,industry2=?,industry3=?,company1=?,company2=?,company3=?,phone=?,location=?,interest=?,last_loggedin=? WHERE id=?";
+
+				PreparedStatement psInner = con.prepareStatement(sqlInner);
+				psInner.setString(1, password);
+				psInner.setString(2, industry1);
+				psInner.setString(3, industry2);
+				psInner.setString(4, industry3);
+				psInner.setString(5, company1);
+				psInner.setString(6, company2);
+				psInner.setString(7, company3);
+				psInner.setString(8, phone);
+				psInner.setString(9, location);
+				psInner.setString(10, interest);
+				psInner.setString(11, dateTime);
+				psInner.setString(12, id);
+
+				if(psInner.executeUpdate()>0){
+					result = 1;
+				}
+
+			}
+
+			con.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return String.valueOf(result);
+	}
 
 }
