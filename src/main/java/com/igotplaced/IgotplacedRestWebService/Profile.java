@@ -80,7 +80,7 @@ public class Profile {
 			e.printStackTrace();
 		}
 
-		return searchJSONObject.toString();
+		return searchJSONObject.toString(); 
 	}
 
 	@POST
