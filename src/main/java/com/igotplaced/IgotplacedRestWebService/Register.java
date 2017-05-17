@@ -3,7 +3,6 @@ package com.igotplaced.IgotplacedRestWebService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -90,22 +89,24 @@ public class Register {
 
 		return String.valueOf(result);
 	}
-	
+
 	@POST
 	@Path("/registerPassword")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_HTML)
 	public String register(@FormParam("id") String id, @FormParam("password") String password,
-			@FormParam("industry1") String industry1, @FormParam("industry2") String industry2, @FormParam("industry3") String industry3,
-			@FormParam("company1") String company1, @FormParam("company2") String company2, @FormParam("company3") String company3,
-			@FormParam("phone") String phone,@FormParam("interest") String interest,@FormParam("location") String location,@FormParam("last_loggedin") String last_loggedin) {
+			@FormParam("industry1") String industry1, @FormParam("industry2") String industry2,
+			@FormParam("industry3") String industry3, @FormParam("company1") String company1,
+			@FormParam("company2") String company2, @FormParam("company3") String company3,
+			@FormParam("phone") String phone, @FormParam("interest") String interest,
+			@FormParam("location") String location, @FormParam("last_loggedin") String last_loggedin) {
 
 		int result = 0;
 
 		try {
 
 			con = Constants.ConnectionOpen();
-			
+
 			String sql = "SELECT * FROM `user_login` WHERE password!='' AND id=?";
 
 			PreparedStatement ps = con.prepareStatement(sql);
@@ -113,7 +114,7 @@ public class Register {
 
 			ResultSet rs = ps.executeQuery();
 
-			if (rs.getRow()>0) {
+			if (!rs.next()) {
 
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 				LocalDateTime now = LocalDateTime.now();
@@ -135,7 +136,7 @@ public class Register {
 				psInner.setString(11, dateTime);
 				psInner.setString(12, id);
 
-				if(psInner.executeUpdate()>0){
+				if (psInner.executeUpdate() > 0) {
 					result = 1;
 				}
 
