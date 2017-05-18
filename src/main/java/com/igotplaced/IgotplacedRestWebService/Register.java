@@ -69,7 +69,7 @@ public class Register {
 
 				String sqlInner = "INSERT INTO user_login (fname, event_admin, email, password, passout, college, department, imgname, industry1, industry2, industry3, company1, company2, company3, phone, status, interview_status, location, interest, intw_schedule, assessment, created_by, last_loggedin, created_user, modified_by, modified_user) "
 						+ "VALUES('" + name + "'," + defaultValueInt + ",'" + email + "','" + defaultValue + "','"
-						+ year + "','" + colg + "','" + dept + "','" + defaultValue + "','" + defaultValue + "','"
+						+ year + "','" + colg.substring(0, Math.min(colg.length(), 44)) + "','" + dept.substring(0, Math.min(dept.length(), 28)) + "','" + defaultValue + "','" + defaultValue + "','"
 						+ defaultValue + "','" + defaultValue + "','" + defaultValue + "','" + defaultValue + "','"
 						+ defaultValue + "','" + defaultValue + "'," + defaultValueInt + "," + defaultValueInt + ",'"
 						+ defaultValue + "','" + Integer.parseInt(check) + "'," + defaultValueInt + ","
@@ -102,12 +102,12 @@ public class Register {
 	@Path("/registerPassword")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_HTML)
-	public String register(@FormParam("id") String id, @FormParam("password") String password,
+	public String registerPassword(@FormParam("id") String id, @FormParam("password") String password,
 			@FormParam("industry1") String industry1, @FormParam("industry2") String industry2,
 			@FormParam("industry3") String industry3, @FormParam("company1") String company1,
 			@FormParam("company2") String company2, @FormParam("company3") String company3,
 			@FormParam("phone") String phone, @FormParam("interest") String interest,
-			@FormParam("location") String location, @FormParam("last_loggedin") String last_loggedin) {
+			@FormParam("location") String location) {
 
 		int result = 0;
 
@@ -156,6 +156,7 @@ public class Register {
 			e.printStackTrace();
 		}
 
+		System.out.println(String.valueOf(result));
 		return String.valueOf(result);
 	}
 
