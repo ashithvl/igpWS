@@ -22,11 +22,11 @@ import utils.Constants;
 public class Register {
 
 	Connection con = null;
-	
+
 	@GET
 	@Path("/mail")
 	@Produces(MediaType.TEXT_HTML)
-	public void mailingCheck(){
+	public void mailingCheck() {
 		Constants.sendMail();
 	}
 
@@ -69,10 +69,11 @@ public class Register {
 
 				String sqlInner = "INSERT INTO user_login (fname, event_admin, email, password, passout, college, department, imgname, industry1, industry2, industry3, company1, company2, company3, phone, status, interview_status, location, interest, intw_schedule, assessment, created_by, last_loggedin, created_user, modified_by, modified_user) "
 						+ "VALUES('" + name + "'," + defaultValueInt + ",'" + email + "','" + defaultValue + "','"
-						+ year + "','" + colg.substring(0, Math.min(colg.length(), 44)) + "','" + dept.substring(0, Math.min(dept.length(), 28)) + "','" + defaultValue + "','" + defaultValue + "','"
-						+ defaultValue + "','" + defaultValue + "','" + defaultValue + "','" + defaultValue + "','"
-						+ defaultValue + "','" + defaultValue + "'," + defaultValueInt + "," + defaultValueInt + ",'"
-						+ defaultValue + "','" + Integer.parseInt(check) + "'," + defaultValueInt + ","
+						+ year + "','" + colg.substring(0, Math.min(colg.length(), 44)) + "','"
+						+ dept.substring(0, Math.min(dept.length(), 28)) + "','" + defaultValue + "','" + defaultValue
+						+ "','" + defaultValue + "','" + defaultValue + "','" + defaultValue + "','" + defaultValue
+						+ "','" + defaultValue + "','" + defaultValue + "'," + defaultValueInt + "," + defaultValueInt
+						+ ",'" + defaultValue + "','" + Integer.parseInt(check) + "'," + defaultValueInt + ","
 						+ defaultValueInt + ", '" + dateTime + "','" + dateInString + "','" + defaultValue + "','"
 						+ dateTime + "','" + defaultValue + "')";
 
@@ -110,44 +111,34 @@ public class Register {
 			@FormParam("location") String location) {
 
 		int result = 0;
+		String sqlInner = null;
 
 		try {
 
 			con = Constants.ConnectionOpen();
 
-			String sql = "SELECT * FROM `user_login` WHERE password!='' AND id=?";
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			String dateTime = dtf.format(now);
 
-			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setString(1, id);
+			sqlInner = "UPDATE `user_login` SET password=?,industry1=?,industry2=?,industry3=?,company1=?,company2=?,company3=?,phone=?,location=?,interest=?,last_loggedin=? WHERE id=?";
 
-			ResultSet rs = ps.executeQuery();
+			PreparedStatement psInner = con.prepareStatement(sqlInner);
+			psInner.setString(1, password);
+			psInner.setString(2, industry1);
+			psInner.setString(3, industry2);
+			psInner.setString(4, industry3);
+			psInner.setString(5, company1);
+			psInner.setString(6, company2);
+			psInner.setString(7, company3);
+			psInner.setString(8, phone);
+			psInner.setString(9, location);
+			psInner.setString(10, interest);
+			psInner.setString(11, dateTime);
+			psInner.setString(12, id);
 
-			if (!rs.next()) {
-
-				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-				LocalDateTime now = LocalDateTime.now();
-				String dateTime = dtf.format(now);
-
-				String sqlInner = "UPDATE `user_login` SET password=?,industry1=?,industry2=?,industry3=?,company1=?,company2=?,company3=?,phone=?,location=?,interest=?,last_loggedin=? WHERE id=?";
-
-				PreparedStatement psInner = con.prepareStatement(sqlInner);
-				psInner.setString(1, password);
-				psInner.setString(2, industry1);
-				psInner.setString(3, industry2);
-				psInner.setString(4, industry3);
-				psInner.setString(5, company1);
-				psInner.setString(6, company2);
-				psInner.setString(7, company3);
-				psInner.setString(8, phone);
-				psInner.setString(9, location);
-				psInner.setString(10, interest);
-				psInner.setString(11, dateTime);
-				psInner.setString(12, id);
-
-				if (psInner.executeUpdate() > 0) {
-					result = 1;
-				}
-
+			if (psInner.executeUpdate() > 0) {
+				result = 1;
 			}
 
 			con.close();
@@ -156,7 +147,6 @@ public class Register {
 			e.printStackTrace();
 		}
 
-		System.out.println(String.valueOf(result));
 		return String.valueOf(result);
 	}
 

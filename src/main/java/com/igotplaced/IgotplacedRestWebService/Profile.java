@@ -80,7 +80,7 @@ public class Profile {
 			e.printStackTrace();
 		}
 
-		return searchJSONObject.toString(); 
+		return searchJSONObject.toString();
 	}
 
 	@POST
@@ -91,18 +91,17 @@ public class Profile {
 
 		Connection con = null;
 
-		String sqlCommand = null,sqlInnerJoin =null,sqlInnerEvenDeep=null,sqlInnerDeep = null,sqlInner=null;
+		String sqlCommand = null, sqlInnerJoin = null, sqlInnerEvenDeep = null, sqlInnerDeep = null, sqlInner = null;
 
-
-		String caption = null, postId = null, post = null, pId = null;
+		String caption = null, postId = null, post = null, pId = null, pi = null;
 		String companyName = null, industryName = null, image = null;
 		String userId = null, userName = null, userCreatedTime = null;
 		String commentUserId = null, commentUserName = null, commentUserImage = null, comment = null;
 		String commentuserId = null, commentCreatedTime = null;
 		int pc = 0, pc1rowCount = 0;
 		boolean deleteComment = false;
-		ResultSet rs=null,rsInner=null,rsInnerDeep=null,rsInnerJoin=null;
-		
+		ResultSet rs = null, rsInner = null, rsInnerDeep = null, rsInnerJoin = null, resultSet = null;
+
 		try {
 
 			con = Constants.ConnectionOpen();
@@ -144,7 +143,7 @@ public class Profile {
 						sqlInnerDeep = "select * from post where pid=?";
 
 						PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-						psInnerDeep.setString(1, postId);
+						psInnerDeep.setString(1, pId);
 
 						rsInnerDeep = psInnerDeep.executeQuery();
 
@@ -154,24 +153,28 @@ public class Profile {
 
 							industryName = rsInnerDeep.getString("Industry");
 
-							if (!rsInner.getString("imgname").equals("")) {
-								image = rsInner.getString("imgname");
-							} else {
-								image = "images/avatar.png";
-							}
+							/*
+							 * if (!rsInner.getString("imgname").equals("")) {
+							 * image = rsInner.getString("imgname"); } else {
+							 * image = "images/avatar.png"; }
+							 */
 
-							userId = rsInner.getString("created_user");
+							userId = rsInnerDeep.getString("created_user");
 
-							userName = rsInner.getString("created_uname");
+							userName = rsInnerDeep.getString("created_uname");
 
-							userCreatedTime = rsInner.getString("created_by");
+							userCreatedTime = rsInnerDeep.getString("created_by");
 
-							sqlInnerEvenDeep = "SELECT * FROM `post_comm` WHERE pid=? order by desc";
+							pi = rsInnerDeep.getString("pid");
+
+							sqlInnerEvenDeep = "SELECT * FROM `post_comm` WHERE pid = ?";
 
 							PreparedStatement psInnerEvenDeep = con.prepareStatement(sqlInnerEvenDeep);
-							psInnerEvenDeep.setString(1, postId);
+							psInnerEvenDeep.setString(1, pi);
 
-							pc1rowCount = psInnerDeep.executeUpdate();
+							resultSet = psInnerEvenDeep.executeQuery();
+
+							pc1rowCount = resultSet.getRow();
 
 							if (pc1rowCount > 1) {
 								pc = pc1rowCount - 2;
@@ -182,7 +185,7 @@ public class Profile {
 							sqlInnerJoin = "SELECT a.id id,a.pid pid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM post_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.pid=? LIMIT ?,2";
 
 							PreparedStatement psInnerJoin = con.prepareStatement(sqlInnerJoin);
-							psInnerJoin.setString(1, postId);
+							psInnerJoin.setString(1, pi);
 							psInnerJoin.setInt(2, pc);
 
 							rsInnerJoin = psInnerJoin.executeQuery();
@@ -227,7 +230,7 @@ public class Profile {
 			e.printStackTrace();
 		}
 
-		return rsInnerDeep.toString();
+		return commentUserName.toString();
 	}
 
 }
