@@ -220,7 +220,7 @@ public class Home {
 
 				while (rsInner.next()) {
 
-					if (rsInner.getString("imgname").equals("")) {
+					if (rsInner.getString("imgname").equals("")) { 
 						map.put("imgname", Constants.ip + "/images/avatar.png");
 					} else {
 						map.put("imgname", Constants.ip + "/uploads/" + rsInner.getString("imgname"));
