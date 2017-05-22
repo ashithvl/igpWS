@@ -122,7 +122,7 @@ public class Register {
 			String dateTime = dtf.format(now);
 
 			sqlInner = "UPDATE `user_login` SET password=?,industry1=?,industry2=?,industry3=?,company1=?,company2=?,company3=?,phone=?,location=?,interest=?,last_loggedin=? WHERE id=?";
-
+ 
 			PreparedStatement psInner = con.prepareStatement(sqlInner);
 			psInner.setString(1, password);
 			psInner.setString(2, industry1);

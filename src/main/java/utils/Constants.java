@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -14,8 +15,13 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class Constants {
 
+
+	public final static String ip = "192.168.11.23";
 	final static String url = "jdbc:mysql://localhost:3306/cogentin_igotplaced";
 	final static String user = "root";
 	final static String pass = "";
@@ -63,49 +69,74 @@ public class Constants {
 		}
 		return md5;
 	}
-	
-	
-	public static void sendMail(){
+
+	public static void sendMail() {
 		// Recipient's email ID needs to be mentioned.
-	      String to = "abcd@gmail.com";
+		String to = "abcd@gmail.com";
 
-	      // Sender's email ID needs to be mentioned
-	      String from = "shrirambaabu0902@gmail.com";
+		// Sender's email ID needs to be mentioned
+		String from = "shrirambaabu0902@gmail.com";
 
-	      // Assuming you are sending email from localhost
-	      String host = "localhost";
+		// Assuming you are sending email from localhost
+		String host = "localhost";
 
-	      // Get system properties
-	      Properties properties = System.getProperties();
+		// Get system properties
+		Properties properties = System.getProperties();
 
-	      // Setup mail server
-	      properties.setProperty("mail.smtp.host", host);
+		// Setup mail server
+		properties.setProperty("mail.smtp.host", host);
 
-	      // Get the default Session object.
-	      Session session = Session.getDefaultInstance(properties);
+		// Get the default Session object.
+		Session session = Session.getDefaultInstance(properties);
 
-	      try {
-	         // Create a default MimeMessage object.
-	         MimeMessage message = new MimeMessage(session);
+		try {
+			// Create a default MimeMessage object.
+			MimeMessage message = new MimeMessage(session);
 
-	         // Set From: header field of the header.
-	         message.setFrom(new InternetAddress(from));
+			// Set From: header field of the header.
+			message.setFrom(new InternetAddress(from));
 
-	         // Set To: header field of the header.
-	         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+			// Set To: header field of the header.
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
-	         // Set Subject: header field
-	         message.setSubject("This is the Subject Line!");
+			// Set Subject: header field
+			message.setSubject("This is the Subject Line!");
 
-	         // Send the actual HTML message, as big as you like
-	         message.setContent("<h1>This is actual message</h1>", "text/html");
+			// Send the actual HTML message, as big as you like
+			message.setContent("<h1>This is actual message</h1>", "text/html");
 
-	         // Send message
-	         Transport.send(message);
-	         System.out.println("Sent message successfully....");
-	      }catch (MessagingException mex) {
-	         mex.printStackTrace();
-	      }
+			// Send message
+			Transport.send(message);
+			System.out.println("Sent message successfully....");
+		} catch (MessagingException mex) {
+			mex.printStackTrace();
+		}
+	}
+
+	public static JSONArray convertToJSON(ResultSet resultSet)
+
+			throws Exception {
+
+		JSONArray jsonArray = new JSONArray();
+
+		while (resultSet.next()) {
+
+			int total_rows = resultSet.getMetaData().getColumnCount();
+
+			JSONObject obj = new JSONObject();
+
+			for (int i = 0; i < total_rows; i++) {
+
+				obj.put(resultSet.getMetaData().getColumnLabel(i + 1).toLowerCase(), resultSet.getObject(i + 1));
+
+				jsonArray.put(obj);
+
+			}
+
+		}
+
+		return jsonArray;
+
 	}
 
 }
