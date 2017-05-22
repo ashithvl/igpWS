@@ -222,7 +222,7 @@ public class Home {
 
 					if (rsInner.getString("imgname").equals("")) { 
 						map.put("imgname", Constants.ip + "/images/avatar.png");
-					} else {
+					} else { 
 						map.put("imgname", Constants.ip + "/uploads/" + rsInner.getString("imgname"));
 					}
 				}
