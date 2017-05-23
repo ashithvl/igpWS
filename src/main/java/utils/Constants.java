@@ -83,7 +83,7 @@ public class Constants {
 		// Get system properties
 		Properties properties = System.getProperties();
 
-		// Setup mail server
+		// Setup mail server 
 		properties.setProperty("mail.smtp.host", host);
 
 		// Get the default Session object.
