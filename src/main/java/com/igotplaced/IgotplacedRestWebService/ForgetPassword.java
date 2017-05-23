@@ -27,6 +27,7 @@ public class ForgetPassword {
 	@Produces(MediaType.TEXT_HTML)
 	public String register(@FormParam("email") String email) {
 
+		
 		int result = 0;
 
 		try {
