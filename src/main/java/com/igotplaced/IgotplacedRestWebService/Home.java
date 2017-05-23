@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import utils.Constants;
@@ -20,6 +21,7 @@ public class Home {
 
 	Connection con = null;
 	JSONObject jsonObj = null;
+	JSONArray  jsonArray = null;
 	Map<String, String> map = null;
 
 	@GET
@@ -28,8 +30,9 @@ public class Home {
 	public String recentFeeds() {
 
 		try {
-
-			jsonObj = new JSONObject();
+			
+			jsonArray = new JSONArray();
+			
 			map = new HashMap<String, String>();
 
 			con = Constants.ConnectionOpen();
@@ -65,7 +68,7 @@ public class Home {
 					}
 				}
 
-				jsonObj.put(rs.getString("created_user"), map);
+				jsonArray.put(map);
 
 			}
 
@@ -79,7 +82,7 @@ public class Home {
 			e.printStackTrace();
 		}
 
-		return jsonObj.toString();
+		return jsonArray.toString();
 	}
 
 	@GET
@@ -88,8 +91,9 @@ public class Home {
 	public String recentlyGotPlaced() {
 
 		try {
-
-			jsonObj = new JSONObject();
+			
+			jsonArray = new JSONArray();
+			
 			map = new HashMap<String, String>();
 
 			con = Constants.ConnectionOpen();
@@ -122,7 +126,7 @@ public class Home {
 					}
 				}
 
-				jsonObj.put(rs.getString("user_id"), map);
+				jsonArray.put(map);
 
 			}
 
@@ -136,7 +140,7 @@ public class Home {
 			e.printStackTrace();
 		}
 
-		return jsonObj.toString();
+		return jsonArray.toString();
 	}
 
 	@GET
@@ -145,8 +149,9 @@ public class Home {
 	public String recentlyGotPlaqced() {
 
 		try {
-
-			jsonObj = new JSONObject();
+			
+			jsonArray = new JSONArray();
+			
 			map = new HashMap<String, String>();
 
 			con = Constants.ConnectionOpen();
@@ -169,8 +174,8 @@ public class Home {
 				} else {
 					map.put("imgname", Constants.ip + "/admin/uploads/" + rs.getString("image"));
 				}
-				jsonObj.put(rs.getString("id"), map);
-
+				
+				jsonArray.put(map);
 			}
 
 			con.close();
@@ -183,7 +188,7 @@ public class Home {
 			e.printStackTrace();
 		}
 
-		return jsonObj.toString();
+		return jsonArray.toString();
 	}
 	
 
@@ -193,8 +198,9 @@ public class Home {
 	public String testimonials() {
 
 		try {
-
-			jsonObj = new JSONObject();
+			
+			jsonArray = new JSONArray();
+			
 			map = new HashMap<String, String>();
 
 			con = Constants.ConnectionOpen();
@@ -227,7 +233,7 @@ public class Home {
 					}
 				}
 
-				jsonObj.put(rs.getString("user_id"), map);
+				jsonArray.put(map);
 
 			}
 
@@ -241,7 +247,7 @@ public class Home {
 			e.printStackTrace();
 		}
 
-		return jsonObj.toString();
+		return jsonArray.toString();
 	}
 
 }
