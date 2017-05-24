@@ -167,7 +167,7 @@ public class Home {
 				map.put("name", rs.getString("name"));
 				map.put("designation", rs.getString("designation"));
 				map.put("company", rs.getString("company"));
-				map.put("company", rs.getString("company"));
+				map.put("linkedin", rs.getString("linkedin"));
 				
 				if (rs.getString("image").equals("")) {
 					map.put("imgname", Constants.ip + "/uploads/gap-orange-blue-pocket-long-sleeve-t-shirt-mens.png");
