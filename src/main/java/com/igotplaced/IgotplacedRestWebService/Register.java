@@ -124,7 +124,7 @@ public class Register {
 			sqlInner = "UPDATE `user_login` SET password=?,industry1=?,industry2=?,industry3=?,company1=?,company2=?,company3=?,phone=?,location=?,interest=?,last_loggedin=? WHERE id=?";
  
 			PreparedStatement psInner = con.prepareStatement(sqlInner);
-			psInner.setString(1, password);
+			psInner.setString(1, Constants.md5(password));
 			psInner.setString(2, industry1);
 			psInner.setString(3, industry2);
 			psInner.setString(4, industry3);
