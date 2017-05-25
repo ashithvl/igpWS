@@ -62,9 +62,9 @@ public class Home {
 
 					map.put("name", rsInner.getString("fname"));
 					if (rsInner.getString("imgname").equals("")) {
-						map.put("imgname", Constants.ip + "/images/avatar.png");
+						map.put("imgname","/images/avatar.png");
 					} else {
-						map.put("imgname", Constants.ip + "/uploads/" + rsInner.getString("imgname"));
+						map.put("imgname","/uploads/" + rsInner.getString("imgname"));
 					}
 				}
 
@@ -120,9 +120,9 @@ public class Home {
 				while (rsInner.next()) {
 
 					if (rsInner.getString("imgname").equals("")) {
-						map.put("imgname", Constants.ip + "/images/avatar.png");
+						map.put("imgname","/images/avatar.png");
 					} else {
-						map.put("imgname", Constants.ip + "/uploads/" + rsInner.getString("imgname"));
+						map.put("imgname", "/uploads/" + rsInner.getString("imgname"));
 					}
 				}
 
@@ -170,9 +170,9 @@ public class Home {
 				map.put("linkedin", rs.getString("linkedin"));
 				
 				if (rs.getString("image").equals("")) {
-					map.put("imgname", Constants.ip + "/uploads/gap-orange-blue-pocket-long-sleeve-t-shirt-mens.png");
+					map.put("imgname","/uploads/gap-orange-blue-pocket-long-sleeve-t-shirt-mens.png");
 				} else {
-					map.put("imgname", Constants.ip + "/admin/uploads/" + rs.getString("image"));
+					map.put("imgname","/admin/uploads/" + rs.getString("image"));
 				}
 				
 				jsonArray.put(map);
@@ -226,10 +226,10 @@ public class Home {
 				while (rsInner.next()) {
 
 					if (rsInner.getString("imgname").equals("")) { 
-						map.put("imgname", Constants.ip + "/images/avatar.png");
+						map.put("imgname","/images/avatar.png");
 						map.put("college", rsInner.getString("college"));
 					} else { 
-						map.put("imgname", Constants.ip + "/uploads/" + rsInner.getString("imgname"));
+						map.put("imgname","/uploads/" + rsInner.getString("imgname"));
 						map.put("college", rsInner.getString("college"));
 					}
 				}
