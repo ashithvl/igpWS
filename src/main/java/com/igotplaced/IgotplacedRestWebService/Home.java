@@ -205,7 +205,7 @@ public class Home {
 
 			con = Constants.ConnectionOpen();
 
-			String sql = "select * from `igotintw_feeds` order by created_by desc";
+			String sql = "select * from igotintw_feeds order by created_by desc";
 
 			PreparedStatement ps = con.prepareStatement(sql);
 
@@ -215,7 +215,6 @@ public class Home {
 
 				map.put("user_name", rs.getString("user_name"));
 				map.put("feedback", rs.getString("feedback").replaceAll("\\<.*?\\>", ""));
-				map.put("college", rs.getString("college"));
 
 				String sqlInner = "select imgname,department,college from user_login where id=?";
 
@@ -228,8 +227,10 @@ public class Home {
 
 					if (rsInner.getString("imgname").equals("")) { 
 						map.put("imgname", Constants.ip + "/images/avatar.png");
+						map.put("college", rsInner.getString("college"));
 					} else { 
 						map.put("imgname", Constants.ip + "/uploads/" + rsInner.getString("imgname"));
+						map.put("college", rsInner.getString("college"));
 					}
 				}
 
