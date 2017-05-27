@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -27,7 +28,7 @@ public class Blog {
 	@GET
 	@Path("/blog")
 	@Produces(MediaType.TEXT_HTML)
-	public String recentNotification() {
+	public String blog() {
 
 		try {
 
@@ -52,6 +53,7 @@ public class Blog {
 
 				map.put("author", rs.getString("author"));
 				map.put("header", rs.getString("header"));
+				map.put("id", rs.getString("id"));
 
 				jsonArray.put(map);
 
@@ -70,4 +72,54 @@ public class Blog {
 		return jsonArray.toString();
 	}
 
+
+	@GET
+	@Path("/blogView/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String blogView(@PathParam("id") String id) {
+
+		try {
+
+			jsonArray = new JSONArray();
+
+			map = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "SELECT * FROM `blog` where id=?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				map.put("header", rs.getString("header"));
+				if (rs.getString("image").equals("")) {
+					map.put("image", "/admin/uploads/muffins-1600x700_1.jpg");
+				} else {
+					map.put("image", "/admin/uploads/" + rs.getString("image"));
+				}
+
+				map.put("author", rs.getString("author"));
+				map.put("header", rs.getString("header"));
+				map.put("contents", rs.getString("contents"));
+
+				jsonArray.put(map);
+
+			}
+
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return jsonArray.toString();
+	}
+
+	
 }
