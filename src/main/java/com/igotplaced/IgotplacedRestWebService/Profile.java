@@ -3,14 +3,10 @@ package com.igotplaced.IgotplacedRestWebService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -21,216 +17,140 @@ import org.json.JSONObject;
 
 import utils.Constants;
 
-@Path("/profile")
+@Path("/profileService")
 public class Profile {
 
+	Connection con = null;
+	JSONObject jsonObj = null;
+	JSONArray  jsonArray = null;
+	Map<String, String> map = null;
+
 	@GET
-	@Path("/searchCompanyIndustry/{id}")
+	@Path("/profile/{id}")
 	@Produces(MediaType.TEXT_HTML)
-	public String search(@PathParam("id") String id) {
-
-		Connection con = null;
-
-		List<String> companyList = new ArrayList<>();
-		List<String> industryList = new ArrayList<>();
-
-		JSONArray companyJSONArray = null;
-		JSONArray industryJSONArray = null;
-
-		JSONObject searchJSONObject = new JSONObject();
+	public String profile(@PathParam("id") String id) {
 
 		try {
+			
+			jsonArray = new JSONArray();
+			
+			map = new HashMap<String, String>();
 
 			con = Constants.ConnectionOpen();
 
-			String sql = "SELECT ids,Caption FROM (SELECT 'company'Caption,companyname ids FROM company WHERE companyname LIKE  '%"
-					+ id
-					+ "%' UNION ALL SELECT 'industry'Caption,industry_type ids FROM industry WHERE industry_type LIKE  '%"
-					+ id + "%')subquery LIMIT 5";
+			String sql = "SELECT * FROM `user_login` WHERE id=?";
 
 			PreparedStatement ps = con.prepareStatement(sql);
-
+			ps.setString(1, id);
+			
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 
-				if (rs.getString("Caption").equals("company"))
-					companyList.add(rs.getString("ids"));
-				else
-					industryList.add(rs.getString("ids"));
+				map.put("imgname", rs.getString("imgname"));
+				map.put("fname", rs.getString("fname"));
+				map.put("department", rs.getString("department"));
+				map.put("college", rs.getString("college"));
+				map.put("industry1", rs.getString("industry1"));
+				map.put("company1", rs.getString("company1"));
+				map.put("industry2", rs.getString("industry2"));
+				map.put("company2", rs.getString("company2"));
+				map.put("industry3", rs.getString("industry3"));
+				map.put("company3", rs.getString("company3"));
+
+				jsonArray.put(map);
 
 			}
 
-			String[] company = companyList.toArray(new String[companyList.size()]);
-
-			companyJSONArray = new JSONArray(Arrays.asList(company));
-
-			String[] industry = industryList.toArray(new String[industryList.size()]);
-
-			industryJSONArray = new JSONArray(Arrays.asList(industry));
-
-			searchJSONObject.put("company", companyJSONArray);
-			searchJSONObject.put("industry", industryJSONArray);
-
 			con.close();
 
-		} catch (Exception e) {
+		} catch ( 
 
+		Exception e) {
+ 
 			System.out.println(e);
 			e.printStackTrace();
 		}
 
-		return searchJSONObject.toString();
+		return jsonArray.toString();
 	}
 
-	@POST
-	@Path("/searchButtonClick")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	
+
+	@GET
+	@Path("/profileInterviewExperience/{id}")
 	@Produces(MediaType.TEXT_HTML)
-	public String searchButtonClick(@FormParam("id") String id, @FormParam("keyword") String keyword) {
-
-		Connection con = null;
-
-		String sqlCommand = null, sqlInnerJoin = null, sqlInnerEvenDeep = null, sqlInnerDeep = null, sqlInner = null;
-
-		String caption = null, postId = null, post = null, pId = null, pi = null;
-		String companyName = null, industryName = null, image = null;
-		String userId = null, userName = null, userCreatedTime = null;
-		String commentUserId = null, commentUserName = null, commentUserImage = null, comment = null;
-		String commentuserId = null, commentCreatedTime = null;
-		int pc = 0, pc1rowCount = 0;
-		boolean deleteComment = false;
-		ResultSet rs = null, rsInner = null, rsInnerDeep = null, rsInnerJoin = null, resultSet = null;
+	public String profileInterviewExperience(@PathParam("id") String id) {
 
 		try {
+			
+			jsonArray = new JSONArray();
+			
+			map = new HashMap<String, String>();
 
 			con = Constants.ConnectionOpen();
 
-			sqlCommand = "SELECT Caption, ids, modified_by FROM (SELECT 'events'Caption, id ids, modified_by FROM events where companyname LIKE '%"
-					+ keyword + "%' or Industry LIKE '%" + keyword
-					+ "%' UNION ALL SELECT 'post'Caption, pid ids, modified_by FROM post  where companyname LIKE '%"
-					+ keyword + "%' or Industry LIKE '%" + keyword
-					+ "%' UNION ALL SELECT 'questions'Caption, id ids,modified_by FROM questions where companyname LIKE '%"
-					+ keyword + "%' or industryname LIKE '%" + keyword
-					+ "%' UNION ALL SELECT  'intexp'Caption, id ids, modified_by FROM interview_exp WHERE companyname LIKE  '%"
-					+ keyword + "%' OR industryname LIKE '%" + keyword
-					+ "%')subquery ORDER BY modified_by DESC , FIELD( Caption,  'events',  'post',  'questions',  'intexp' ) LIMIT 10";
+			String sql = "select * from `interview_exp` where user_id=? order by modified_by desc";
 
-			PreparedStatement ps = con.prepareStatement(sqlCommand);
-
-			rs = ps.executeQuery();
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, id);
+			
+			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 
-				caption = rs.getString("Caption");
+				map.put("feedback", rs.getString("feedback"));
+				map.put("industryname", rs.getString("industryname"));
+				map.put("interview_status", rs.getString("interview_status"));
+				map.put("companyname", rs.getString("companyname"));
+				map.put("user_id", rs.getString("user_id"));
+				
+				String sqlInner = "select * from `user_login` where id=?";
 
-				if (caption.equals("post")) {
+				PreparedStatement psInner = con.prepareStatement(sqlInner);
+				psInner.setString(1, rs.getString("user_id"));
 
-					postId = rs.getString("ids");
+				ResultSet rsInner = psInner.executeQuery();
 
-					sqlInner = "select * from post where pid=?";
+				while (rsInner.next()) {
+					
 
-					PreparedStatement psInner = con.prepareStatement(sqlInner);
-					psInner.setString(1, postId);
+					map.put("created_user", rs.getString("created_user"));
+					map.put("username", rs.getString("username"));
+					map.put("user_id", rs.getString("user_id"));
+					map.put("created_by", rs.getString("created_by"));
 
-					rsInner = psInner.executeQuery();
-
-					while (rsInner.next()) {
-
-						post = rsInner.getString("post");
-						pId = rsInner.getString("pid");
-
-						sqlInnerDeep = "select * from post where pid=?";
-
-						PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-						psInnerDeep.setString(1, pId);
-
-						rsInnerDeep = psInnerDeep.executeQuery();
-
-						while (rsInnerDeep.next()) {
-
-							companyName = rsInnerDeep.getString("companyname");
-
-							industryName = rsInnerDeep.getString("Industry");
-
-							/*
-							 * if (!rsInner.getString("imgname").equals("")) {
-							 * image = rsInner.getString("imgname"); } else {
-							 * image = "images/avatar.png"; }
-							 */
-
-							userId = rsInnerDeep.getString("created_user");
-
-							userName = rsInnerDeep.getString("created_uname");
-
-							userCreatedTime = rsInnerDeep.getString("created_by");
-
-							pi = rsInnerDeep.getString("pid");
-
-							sqlInnerEvenDeep = "SELECT * FROM `post_comm` WHERE pid = ?";
-
-							PreparedStatement psInnerEvenDeep = con.prepareStatement(sqlInnerEvenDeep);
-							psInnerEvenDeep.setString(1, pi);
-
-							resultSet = psInnerEvenDeep.executeQuery();
-
-							pc1rowCount = resultSet.getRow();
-
-							if (pc1rowCount > 1) {
-								pc = pc1rowCount - 2;
-							} else if (pc1rowCount == 1 || pc1rowCount == 0) {
-								pc = 0;
-							}
-
-							sqlInnerJoin = "SELECT a.id id,a.pid pid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM post_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.pid=? LIMIT ?,2";
-
-							PreparedStatement psInnerJoin = con.prepareStatement(sqlInnerJoin);
-							psInnerJoin.setString(1, pi);
-							psInnerJoin.setInt(2, pc);
-
-							rsInnerJoin = psInnerJoin.executeQuery();
-
-							while (rsInnerJoin.next()) {
-								commentUserId = rsInnerJoin.getString("user_id");
-								commentUserName = rsInnerJoin.getString("created_uname");
-
-								if (!rsInnerJoin.getString("imgname").equals("")) {
-									commentUserImage = rsInnerJoin.getString("imgname");
-								} else {
-									commentUserImage = "images/avatar.png";
-								}
-
-								comment = rsInnerJoin.getString("comments");
-								commentCreatedTime = rsInnerJoin.getString("created_by");
-								commentuserId = rsInnerJoin.getString("user_id");
-
-								if (id.equals(userId) || id.equals(commentuserId)) {
-									deleteComment = true;
-								}
-							}
-
-						}
-
+					if (rsInner.getString("imgname").equals("")) {
+						map.put("imgname","/images/avatar.png");
+					} else {
+						map.put("imgname", "/uploads/" + rsInner.getString("imgname"));
 					}
-
-				} else if (caption.equals("events")) {
-
-				} else if (caption.equals("questions")) {
-
-				} else if (caption.equals("intexp")) {
-
+					
+					
+					
+					
+					
+					
+					
+					
 				}
+				
+
+				jsonArray.put(map);
+
 			}
 
 			con.close();
 
-		} catch (Exception e) {
+		} catch ( 
 
+		Exception e) {
+ 
 			System.out.println(e);
 			e.printStackTrace();
 		}
 
-		return commentUserName.toString();
+		return jsonArray.toString();
 	}
-
+	
 }

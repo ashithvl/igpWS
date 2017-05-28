@@ -56,8 +56,8 @@ public class SpinnerValues {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-
-				companyList.add(rs.getString("companyname"));
+				
+					companyList.add(rs.getString("companyname"));
 
 			}
 			String[] company = companyList.toArray(new String[companyList.size()]);
