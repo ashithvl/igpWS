@@ -51,7 +51,7 @@ public class Login {
 	                
 	                psInner.executeUpdate();
 	                
-	                result = "true";
+	                result = rs.getString("id")+","+rs.getString("fname");
  
 	            }
 	            con.close();
