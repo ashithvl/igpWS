@@ -87,10 +87,11 @@ public class MainActivity {
 
 					map.put("post", rsInner.getString("post").replaceAll("\\<.*?\\>", ""));
 					map.put("pid", rsInner.getString("pid"));
-					map.put("created_user", rsInner.getString("created_user"));
+					map.put("Industry", rsInner.getString("Industry"));
+					map.put("created_user", rsInner.getString("created_user")); 
 					map.put("companyname", rsInner.getString("companyname"));
 					map.put("created_uname", rsInner.getString("created_uname"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by", rsInner.getString("created_by")); 
 					map.put("created_uname", rsInner.getString("created_uname"));
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
@@ -99,7 +100,7 @@ public class MainActivity {
 					psInnerDeep.setString(1, rsInner.getString("created_user"));
 
 					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
-
+ 
 					while (rsInnerDeep.next()) {
 
 						if (rsInnerDeep.getString("imgname").equals("")) {
@@ -169,11 +170,11 @@ public class MainActivity {
 					if (!jsonArray.isNull(i)) {
 						newObject.append("", jsonArray.getJSONObject(i));
 					}
-				}
+				} 
 			}
 
 			con.close();
-
+ 
 		} catch (
 
 		Exception e) {

@@ -21,7 +21,7 @@ import utils.Constants;
 @Path("/registrationService")
 public class Register {
 
-	Connection con = null;
+	Connection con = null; 
 
 	@GET
 	@Path("/mail")
