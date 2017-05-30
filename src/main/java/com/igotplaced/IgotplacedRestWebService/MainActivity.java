@@ -58,6 +58,10 @@ public class MainActivity {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
+				
+
+				map.put("fname", rs.getString("fname"));
+				map.put("imgname", rs.getString("imgname"));
 
 				String sqlInner;
 				PreparedStatement psInner;
