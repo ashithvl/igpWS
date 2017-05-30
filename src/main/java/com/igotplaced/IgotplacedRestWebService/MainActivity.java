@@ -122,7 +122,7 @@ public class MainActivity {
 
 					PreparedStatement psPc = con.prepareStatement(sqlPc);
 					psPc.setString(1, rsInner.getString("pid"));
-
+ 
 					ResultSet rsPc = psPc.executeQuery();
 
 					while (rsPc.next()) {
