@@ -767,9 +767,9 @@ public class MainActivity {
 					while (rsInnerDeep.next()) {
 
 						if (rsInnerDeep.getString("imgname").equals("")) {
-							map.put("interviewUserImgName", "/images/avatar.png");
+							map.put("eventName", "/images/avatar.png");
 						} else {
-							map.put("interviewUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
+							map.put("eventImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 						}
 					}
 					
@@ -777,7 +777,8 @@ public class MainActivity {
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					Date todaysDate = new Date();
-					if((sdf.format(eventDate)).compareTo(sdf.format(todaysDate)) < 0){
+					
+					if((eventDate).compareTo(sdf.format(todaysDate)) < 0){
 						map.put("event", "Closed");
 					}else{
 						map.put("created_by", "I'm going");
@@ -792,10 +793,10 @@ public class MainActivity {
 					
 					while (eventRs.next()) {
 
-						if(eventRs.getInt(1) > 0){
-							map.put("event", "Closed");
+						if(eventRs.getInt(1) <= 0){
+							map.put("count", "Be First to Register");
 						}else{
-							map.put("event", "I'm going");
+							map.put("count", eventRs.getInt(1)+" People going");
 						}
 						
 					}
