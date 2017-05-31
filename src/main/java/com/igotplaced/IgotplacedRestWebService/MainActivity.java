@@ -755,6 +755,7 @@ public class MainActivity {
 
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_uname", rsInner.getString("created_uname"));
 
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
@@ -767,7 +768,7 @@ public class MainActivity {
 					while (rsInnerDeep.next()) {
 
 						if (rsInnerDeep.getString("imgname").equals("")) {
-							map.put("eventName", "/images/avatar.png");
+							map.put("eventImgName", "/images/avatar.png");
 						} else {
 							map.put("eventImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 						}
