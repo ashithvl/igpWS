@@ -10,6 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
@@ -23,16 +24,19 @@ public class Blog {
 	Connection con = null;
 	JSONObject jsonObj = null;
 	JSONArray jsonArray = null;
+	JSONObject newObject = null;
 	Map<String, String> map = null;
 
 	@GET
 	@Path("/blog")
 	@Produces(MediaType.TEXT_HTML)
-	public String blog() {
+	public String blog(@QueryParam("start") int start,
+			@QueryParam("size") int size) {
 
 		try {
 
 			jsonArray = new JSONArray();
+			newObject = new JSONObject();
 
 			map = new HashMap<String, String>();
 
@@ -58,6 +62,11 @@ public class Blog {
 				jsonArray.put(map);
 
 			}
+			for (int i = start; i <= size; i++) {
+				if (!jsonArray.isNull(i)) {
+					newObject.append("", jsonArray.getJSONObject(i));
+				}
+			}
 
 			con.close();
 
@@ -69,7 +78,7 @@ public class Blog {
 			e.printStackTrace();
 		}
 
-		return jsonArray.toString();
+		return newObject.toString();
 	}
 
 

@@ -10,6 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
@@ -22,17 +23,20 @@ public class Notification {
 
 	Connection con = null;
 	JSONObject jsonObj = null;
+	JSONObject newObject = null;
 	JSONArray jsonArray = null;
 	Map<String, String> map = null;
 
 	@GET
 	@Path("/notification/{id}")
 	@Produces(MediaType.TEXT_HTML)
-	public String recentNotification(@PathParam("id") String id) {
+	public String recentNotification(@PathParam("id") String id, @QueryParam("start") int start,
+			@QueryParam("size") int size) {
 
 		try {
 
 			jsonArray = new JSONArray();
+			newObject = new JSONObject();
 
 			map = new HashMap<String, String>();
 
@@ -80,6 +84,12 @@ public class Notification {
 
 			}
 
+			for (int i = start; i <= size; i++) {
+				if (!jsonArray.isNull(i)) {
+					newObject.append("", jsonArray.getJSONObject(i));
+				}
+			}
+
 			con.close();
 
 		} catch (
@@ -90,7 +100,7 @@ public class Notification {
 			e.printStackTrace();
 		}
 
-		return jsonArray.toString();
+		return newObject.toString();
 	}
 
 }
