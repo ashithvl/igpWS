@@ -389,7 +389,7 @@ public class MainActivity {
 					psInner = con.prepareStatement(sqlInner);
 
 				} else {
-					sqlInner = "select * from `questions` where industryname=? or industryname=? or industryname=? or industryname=? order by id desc";
+					sqlInner = "select * from `interview_exp` where industryname=? or industryname=? or industryname=? or industryname=? order by id desc";
 
 					psInner = con.prepareStatement(sqlInner);
 					psInner.setString(1, rs.getString("industry1"));
@@ -403,19 +403,19 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
-					map.put("question", rsInner.getString("question").replaceAll("\\<.*?\\>", ""));
-					map.put("category", rsInner.getString("category"));
-					map.put("subcategory", rsInner.getString("subcategory"));
+					map.put("feedback", rsInner.getString("feedback").replaceAll("\\<.*?\\>", ""));
+					map.put("industryname", rsInner.getString("industryname"));
+					map.put("interview_status", rsInner.getString("interview_status"));
 					map.put("industryname", rsInner.getString("industryname"));
 					map.put("companyname", rsInner.getString("companyname"));
 
-					map.put("created_user", rsInner.getString("created_user"));
+					map.put("username", rsInner.getString("username"));
 					map.put("created_by", rsInner.getString("created_by"));
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, rsInner.getString("created_user"));
+					psInnerDeep.setString(1, rsInner.getString("id"));
 
 					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
 
@@ -509,6 +509,173 @@ public class MainActivity {
 	@Path("/topQuestion/{userId}")
 	@Produces(MediaType.TEXT_HTML)
 	public String topQuestion(@PathParam("userId") String userId, @QueryParam("start") int start,
+			@QueryParam("size") int size) {
+
+		try {
+
+			jsonArray = new JSONArray();
+			commentArray = new JSONArray();
+			newObject = new JSONObject();
+
+			commentJsonObject = new JSONObject();
+
+			map = new HashMap<String, String>();
+			commentMap = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "SELECT * FROM `user_login` WHERE id=?";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, userId);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				map.put("fname", rs.getString("fname"));
+				if (rs.getString("imgname").equals("")) {
+					map.put("imgname", "/images/avatar.png");
+				} else {
+					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+				}
+
+				String sqlInner;
+				PreparedStatement psInner;
+
+				if (rs.getString("industry1").equals("All Industries")
+						|| rs.getString("industry2").equals("All Industries")
+						|| rs.getString("industry3").equals("All Industries")) {
+
+					sqlInner = "select * from `questions` order by id desc";
+
+					psInner = con.prepareStatement(sqlInner);
+
+				} else {
+					sqlInner = "select * from `questions` where industryname=? or industryname=? or industryname=? or industryname=? order by modified_by desc ";
+
+					psInner = con.prepareStatement(sqlInner);
+					psInner.setString(1, rs.getString("industry1"));
+					psInner.setString(2, rs.getString("industry2"));
+					psInner.setString(3, rs.getString("industry3"));
+					psInner.setString(4, "All Industries");
+
+				}
+
+				ResultSet rsInner = psInner.executeQuery();
+
+				while (rsInner.next()) {
+
+					map.put("question", rsInner.getString("question").replaceAll("\\<.*?\\>", ""));
+					map.put("category", rsInner.getString("category"));
+					map.put("industryname", rsInner.getString("industryname"));
+					map.put("companyname", rsInner.getString("companyname"));
+					map.put("subcategory", rsInner.getString("subcategory"));
+					map.put("subcategory", rsInner.getString("subcategory"));
+
+					map.put("created_user", rsInner.getString("created_user"));
+					map.put("created_by", rsInner.getString("created_by"));
+
+					String sqlInnerDeep = "select * from `user_login` where id=?";
+
+					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
+					psInnerDeep.setString(1, rsInner.getString("id"));
+
+					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
+
+					while (rsInnerDeep.next()) {
+
+						if (rsInnerDeep.getString("imgname").equals("")) {
+							map.put("interviewUserImgName", "/images/avatar.png");
+						} else {
+							map.put("interviewUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
+						}
+					}
+
+				/*	String sqlPc = "SELECT * FROM `interview_comm` WHERE iid=? order by desc ";
+
+					PreparedStatement psPc = con.prepareStatement(sqlPc);
+					psPc.setString(1, rsInner.getString("user_id"));
+
+					ResultSet rsPc = psPc.executeQuery();
+
+					while (rsPc.next()) {
+
+						if (rsPc.getRow() > 1) {
+							pc = rsPc.getRow() - 2;
+						} else if (rsPc.getRow() == 1 || rsPc.getRow() == 0) {
+							pc = 0;
+						}
+
+					}
+
+					String sqlinterviewExperiencet = "SELECT a.id id,a.iid iid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM interview_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.iid=? LIMIT ?,2";
+
+					PreparedStatement psinterviewExperience = con.prepareStatement(sqlinterviewExperiencet);
+					psinterviewExperience.setString(1, rsInner.getString("user_id"));
+					psinterviewExperience.setInt(2, pc);
+
+					ResultSet rsinterviewExperience = psinterviewExperience.executeQuery();
+
+					while (rsinterviewExperience.next()) {
+
+						commentMap.put("interviewExperienceUser_id", rsinterviewExperience.getString("user_id"));
+						commentMap.put("interviewExperiencecreated_uname",
+								rsinterviewExperience.getString("created_uname"));
+						commentMap.put("interviewExperiencecomments", rsinterviewExperience.getString("comments"));
+						commentMap.put("interviewExperiencecreated_by", rsInner.getString("created_user"));
+						commentMap.put("interviewExperienceuser_id", rsinterviewExperience.getString("created_by"));
+						commentMap.put("interviewExperienceid", rsinterviewExperience.getString("id"));
+
+						if (rsinterviewExperience.getString("imgname").equals("")) {
+							commentMap.put("commentuserimgname", "/images/avatar.png");
+						} else {
+							commentMap.put("commentuserimgname",
+									"/uploads/" + rsinterviewExperience.getString("imgname"));
+						}
+
+						if (rsInner.getString("created_user").equals(userId)
+								|| rsinterviewExperience.getString("user_id").equals(userId)) {
+							commentMap.put("interviewExperiencedelete", "1");
+						} else {
+							commentMap.put("interviewExperiencedelete", "0");
+						}
+						
+						 * commentArray.put(commentMap);
+						 
+						commentArray.put(commentMap);
+					}
+*/
+					jsonArray.put(map);
+
+				}
+
+				for (int i = start; i <= size; i++) {
+					if (!jsonArray.isNull(i)) {
+						newObject.append("", jsonArray.getJSONObject(i));
+					}
+				}
+			}
+
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return newObject.toString();
+	}
+	
+	
+
+	@GET
+	@Path("/topEvent/{userId}")
+	@Produces(MediaType.TEXT_HTML)
+	public String topEvent(@PathParam("userId") String userId, @QueryParam("start") int start,
 			@QueryParam("size") int size) {
 
 		try {
@@ -668,5 +835,7 @@ public class MainActivity {
 
 		return newObject.toString();
 	}
+	
+	
 
 }
