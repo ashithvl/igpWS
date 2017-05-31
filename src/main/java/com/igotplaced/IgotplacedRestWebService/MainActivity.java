@@ -3,6 +3,9 @@ package com.igotplaced.IgotplacedRestWebService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -575,11 +578,13 @@ public class MainActivity {
 
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_by", rsInner.getString("created_by"));
-
+					
+					
+					
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, rsInner.getString("id"));
+					psInnerDeep.setString(1, rsInner.getString("created_user"));
 
 					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
 
@@ -591,6 +596,8 @@ public class MainActivity {
 							map.put("interviewUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 						}
 					}
+					
+
 
 				/*	String sqlPc = "SELECT * FROM `interview_comm` WHERE iid=? order by desc ";
 
@@ -714,12 +721,12 @@ public class MainActivity {
 						|| rs.getString("industry2").equals("All Industries")
 						|| rs.getString("industry3").equals("All Industries")) {
 
-					sqlInner = "select * from `interview_exp` order by id desc";
+					sqlInner = "select * from `events` order by id desc";
 
 					psInner = con.prepareStatement(sqlInner);
 
 				} else {
-					sqlInner = "select * from `interview_exp` where industryname=? or industryname=? or industryname=? or industryname=? order by modified_by desc ";
+					sqlInner = "select * from `events` where industryname=? or industryname=? or industryname=? or industryname=? order by modified_by desc ";
 
 					psInner = con.prepareStatement(sqlInner);
 					psInner.setString(1, rs.getString("industry1"));
@@ -733,19 +740,23 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
-					map.put("feedback", rsInner.getString("feedback").replaceAll("\\<.*?\\>", ""));
-					map.put("interview_status", rsInner.getString("interview_status"));
-					map.put("industryname", rsInner.getString("industryname"));
+					map.put("notes", rsInner.getString("notes").replaceAll("\\<.*?\\>", ""));
+					map.put("eventname", rsInner.getString("eventname"));
+					map.put("datetime", rsInner.getString("datetime"));
+					map.put("eventtype", rsInner.getString("eventtype"));
+					map.put("location", rsInner.getString("location"));
+					map.put("id", rsInner.getString("id"));
+					map.put("Industry", rsInner.getString("Industry"));
 					map.put("companyname", rsInner.getString("companyname"));
-					map.put("user_id", rsInner.getString("user_id"));
 
-					map.put("username", rsInner.getString("username"));
+					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_by", rsInner.getString("created_by"));
+
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, rsInner.getString("user_id"));
+					psInnerDeep.setString(1, rsInner.getString("id"));
 
 					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
 
@@ -757,6 +768,35 @@ public class MainActivity {
 							map.put("interviewUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 						}
 					}
+					
+					String eventDate = rsInner.getString("datetime");
+					
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					Date todaysDate = new Date();
+					if((sdf.format(eventDate)).compareTo(sdf.format(todaysDate)) < 0){
+						map.put("event", "Closed");
+					}else{
+						map.put("created_by", "I'm going");
+					}
+					
+					String countSql = "SELECT * FROM `event_register` WHERE eventid=?";
+
+					PreparedStatement psevent = con.prepareStatement(countSql);
+					psevent.setString(1, rsInner.getString("id"));
+
+					ResultSet eventRs = psevent.executeQuery();
+					
+					while (eventRs.next()) {
+
+						if(eventRs.getInt(1) > 0){
+							map.put("event", "Closed");
+						}else{
+							map.put("created_by", "I'm going");
+						}
+						
+					}
+
+					
 
 				/*	String sqlPc = "SELECT * FROM `interview_comm` WHERE iid=? order by desc ";
 
