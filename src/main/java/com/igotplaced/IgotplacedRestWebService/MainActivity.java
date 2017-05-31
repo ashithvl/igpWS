@@ -414,23 +414,23 @@ public class MainActivity {
 
 					map.put("username", rsInner.getString("username"));
 					map.put("created_by", rsInner.getString("created_by"));
-
+					
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, rsInner.getString("id"));
+					psInnerDeep.setString(1, rsInner.getString("created_user"));
 
 					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
 
 					while (rsInnerDeep.next()) {
 
 						if (rsInnerDeep.getString("imgname").equals("")) {
-							map.put("questionUserImgName", "/images/avatar.png");
+							map.put("interviewUserImgName", "/images/avatar.png");
 						} else {
-							map.put("questionUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
+							map.put("interviewUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 						}
 					}
-
+				
 		/*			String sqlPc = "SELECT * FROM `questn_comm` WHERE qid=? order by desc";
 
 					PreparedStatement psPc = con.prepareStatement(sqlPc);
@@ -581,21 +581,25 @@ public class MainActivity {
 					
 					
 					
+	
+					
+
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, rsInner.getString("created_user"));
+					psInnerDeep.setString(1, rsInner.getString("id"));
 
 					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
 
 					while (rsInnerDeep.next()) {
 
 						if (rsInnerDeep.getString("imgname").equals("")) {
-							map.put("interviewUserImgName", "/images/avatar.png");
+							map.put("questionUserImgName", "/images/avatar.png");
 						} else {
-							map.put("interviewUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
+							map.put("questionUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 						}
 					}
+
 					
 
 
