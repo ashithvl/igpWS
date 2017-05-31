@@ -418,7 +418,7 @@ public class MainActivity {
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, rsInner.getString("created_user"));
+					psInnerDeep.setString(1, rsInner.getString("id"));
 
 					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
 
@@ -587,7 +587,7 @@ public class MainActivity {
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, rsInner.getString("id"));
+					psInnerDeep.setString(1, rsInner.getString("created_user"));
 
 					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
 
@@ -730,7 +730,7 @@ public class MainActivity {
 					psInner = con.prepareStatement(sqlInner);
 
 				} else {
-					sqlInner = "select * from `events` where industryname=? or industryname=? or industryname=? or industryname=? order by modified_by desc ";
+					sqlInner = "select * from `events` where Industry=? or Industry=? or Industry=? or Industry=? order by id desc ";
 
 					psInner = con.prepareStatement(sqlInner);
 					psInner.setString(1, rs.getString("industry1"));
@@ -795,7 +795,7 @@ public class MainActivity {
 						if(eventRs.getInt(1) > 0){
 							map.put("event", "Closed");
 						}else{
-							map.put("created_by", "I'm going");
+							map.put("event", "I'm going");
 						}
 						
 					}
