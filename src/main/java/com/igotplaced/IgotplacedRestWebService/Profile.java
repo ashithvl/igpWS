@@ -3,12 +3,17 @@ package com.igotplaced.IgotplacedRestWebService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,6 +22,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.mysql.cj.api.jdbc.Statement;
 
 import utils.Constants;
 
@@ -89,7 +96,7 @@ public class Profile {
 	public String profileEdit(@PathParam("id") String id) {
 
 		List<String> Company1List = null, Company2List = null, Company3List = null;
-		String company1 = "",company2 = "",company3 = "";
+		String company1 = "", company2 = "", company3 = "";
 
 		try {
 
@@ -116,25 +123,24 @@ public class Profile {
 
 				if (!rs.getString("company1").equals("")) {
 					Company1List = Arrays.asList(rs.getString("company1").split(","));
-					if(!Company1List.isEmpty()){
-						company1 = Company1List.get(Company1List.size()-1);
+					if (!Company1List.isEmpty()) {
+						company1 = Company1List.get(Company1List.size() - 1);
 					}
 				}
-				
-				
+
 				if (!rs.getString("company1").equals("")) {
 					Company2List = Arrays.asList(rs.getString("company2").split(","));
-					
-					if(!Company2List.isEmpty()){
-						company2 = Company2List.get(Company2List.size()-1);
+
+					if (!Company2List.isEmpty()) {
+						company2 = Company2List.get(Company2List.size() - 1);
 					}
 				}
-				
+
 				if (!rs.getString("company1").equals("")) {
 					Company3List = Arrays.asList(rs.getString("company2").split(","));
-					
-					if(!Company3List.isEmpty()){
-						company3 = Company3List.get(Company3List.size()-1);
+
+					if (!Company3List.isEmpty()) {
+						company3 = Company3List.get(Company3List.size() - 1);
 					}
 				}
 
@@ -168,6 +174,63 @@ public class Profile {
 		}
 
 		return jsonArray.toString();
+	}
+
+	@POST
+	@Path("/profileUpdate")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_HTML)
+	public String register(@FormParam("id") String id, @FormParam("industry1") String industry1,
+			@FormParam("industry2") String industry2, @FormParam("industry3") String industry3,
+			@FormParam("company1") String company1, @FormParam("company2") String company2,
+			@FormParam("company3") String company3, @FormParam("phone") String phone,
+			@FormParam("interest") String interest, @FormParam("location") String location,
+			@FormParam("name") String name, @FormParam("email") String email, @FormParam("year") String year,
+			@FormParam("colg") String colg, @FormParam("dept") String dept, @FormParam("check") String check) {
+
+		int result = 0;
+		int rsLastGeneratedAutoIncrementId = 0;
+		String sqlInner;
+
+		try {
+
+			con = Constants.ConnectionOpen();
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			String dateTime = dtf.format(now);
+
+			sqlInner = "UPDATE `user_login` SET check=?,industry1=?,industry2=?,industry3=?,company1=?,company2=?,"
+					+ "company3=?,phone=?,location=?,interest=?,name =?, email = ?year=?,colg=?,dept=?,last_loggedin=? WHERE id=?";
+
+			PreparedStatement psInner = con.prepareStatement(sqlInner);
+			psInner.setString(1, check);
+			psInner.setString(2, industry1);
+			psInner.setString(3, industry2);
+			psInner.setString(4, industry3);
+			psInner.setString(5, company1);
+			psInner.setString(6, company2);
+			psInner.setString(7, company3);
+			psInner.setString(8, phone);
+			psInner.setString(9, location);
+			psInner.setString(10, interest);
+			psInner.setString(11, name);
+			psInner.setString(12, email);
+			psInner.setString(13, colg);
+			psInner.setString(14, dept);
+			psInner.setString(15, dateTime);
+			psInner.setString(16, id);
+
+			if (psInner.executeUpdate() > 0) {
+				result = 1;
+			}
+			con.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return String.valueOf(result);
 	}
 
 	@GET
