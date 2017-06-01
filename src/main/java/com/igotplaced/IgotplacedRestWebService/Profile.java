@@ -76,73 +76,72 @@ public class Profile {
 
 		return jsonArray.toString();
 	}
-/*
-	@GET
-	@Path("/profileInterviewExperience/{id}")
-	@Produces(MediaType.TEXT_HTML)
-	public String profileInterviewExperience(@PathParam("id") String id) {
-
-		try {
-
-			jsonArray = new JSONArray();
-
-			map = new HashMap<String, String>();
-
-			con = Constants.ConnectionOpen();
-
-			String sql = "select * from `interview_exp` where user_id=? order by modified_by desc";
-
-			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setString(1, id);
-
-			ResultSet rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				map.put("feedback", rs.getString("feedback"));
-				map.put("industryname", rs.getString("industryname"));
-				map.put("interview_status", rs.getString("interview_status"));
-				map.put("companyname", rs.getString("companyname"));
-				map.put("user_id", rs.getString("user_id"));
-
-				String sqlInner = "select * from `user_login` where id=?";
-
-				PreparedStatement psInner = con.prepareStatement(sqlInner);
-				psInner.setString(1, rs.getString("user_id"));
-
-				ResultSet rsInner = psInner.executeQuery();
-
-				while (rsInner.next()) {
-
-					map.put("created_user", rs.getString("created_user"));
-					map.put("username", rs.getString("username"));
-					map.put("user_id", rs.getString("user_id"));
-					map.put("created_by", rs.getString("created_by"));
-
-					if (rsInner.getString("imgname").equals("")) {
-						map.put("imgname", "/images/avatar.png");
-					} else {
-						map.put("imgname", "/uploads/" + rsInner.getString("imgname"));
-					}
-
-				}
-
-				jsonArray.put(map);
-
-			}
-
-			con.close();
-
-		} catch (
-
-		Exception e) {
-
-			System.out.println(e);
-			e.printStackTrace();
-		}
-
-		return jsonArray.toString();
-	}*/
+	/*
+	 * @GET
+	 * 
+	 * @Path("/profileInterviewExperience/{id}")
+	 * 
+	 * @Produces(MediaType.TEXT_HTML) public String
+	 * profileInterviewExperience(@PathParam("id") String id) {
+	 * 
+	 * try {
+	 * 
+	 * jsonArray = new JSONArray();
+	 * 
+	 * map = new HashMap<String, String>();
+	 * 
+	 * con = Constants.ConnectionOpen();
+	 * 
+	 * String sql =
+	 * "select * from `interview_exp` where user_id=? order by modified_by desc"
+	 * ;
+	 * 
+	 * PreparedStatement ps = con.prepareStatement(sql); ps.setString(1, id);
+	 * 
+	 * ResultSet rs = ps.executeQuery();
+	 * 
+	 * while (rs.next()) {
+	 * 
+	 * map.put("feedback", rs.getString("feedback")); map.put("industryname",
+	 * rs.getString("industryname")); map.put("interview_status",
+	 * rs.getString("interview_status")); map.put("companyname",
+	 * rs.getString("companyname")); map.put("user_id",
+	 * rs.getString("user_id"));
+	 * 
+	 * String sqlInner = "select * from `user_login` where id=?";
+	 * 
+	 * PreparedStatement psInner = con.prepareStatement(sqlInner);
+	 * psInner.setString(1, rs.getString("user_id"));
+	 * 
+	 * ResultSet rsInner = psInner.executeQuery();
+	 * 
+	 * while (rsInner.next()) {
+	 * 
+	 * map.put("created_user", rs.getString("created_user"));
+	 * map.put("username", rs.getString("username")); map.put("user_id",
+	 * rs.getString("user_id")); map.put("created_by",
+	 * rs.getString("created_by"));
+	 * 
+	 * if (rsInner.getString("imgname").equals("")) { map.put("imgname",
+	 * "/images/avatar.png"); } else { map.put("imgname", "/uploads/" +
+	 * rsInner.getString("imgname")); }
+	 * 
+	 * }
+	 * 
+	 * jsonArray.put(map);
+	 * 
+	 * }
+	 * 
+	 * con.close();
+	 * 
+	 * } catch (
+	 * 
+	 * Exception e) {
+	 * 
+	 * System.out.println(e); e.printStackTrace(); }
+	 * 
+	 * return jsonArray.toString(); }
+	 */
 
 	@GET
 	@Path("/profilePost/{userId}")
@@ -170,9 +169,9 @@ public class Profile {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {/*
-
-				System.out.println(rs.getString("post"));
-*/
+								 * 
+								 * System.out.println(rs.getString("post"));
+								 */
 				map.put("post", rs.getString("post"));
 				map.put("post_created_user", rs.getString("created_user"));
 				map.put("created_by", rs.getString("created_by"));
@@ -250,10 +249,8 @@ public class Profile {
 				map.put("feedback", rs.getString("feedback").replaceAll("\\<.*?\\>", ""));
 				map.put("interview_status", rs.getString("interview_status"));
 				map.put("created_by", rs.getString("created_by"));
-				
+
 				map.put("username", rs.getString("username"));
-
-
 
 				String sqlInnerDeep = "select * from `user_login` where id=?";
 
@@ -270,8 +267,7 @@ public class Profile {
 						map.put("interviewExperienceimgname", "/uploads/" + rsInnerDeep.getString("imgname"));
 					}
 				}
-				
-				
+
 				map.put("industryname", rs.getString("industryname"));
 				map.put("user_id", rs.getString("user_id"));
 				map.put("companyname", rs.getString("companyname"));
@@ -299,5 +295,131 @@ public class Profile {
 
 		return newObject.toString();
 	}
+
+	@GET
+	@Path("/profileQuestion/{userId}")
+	@Produces(MediaType.TEXT_HTML)
+	public String profileQuestion(@PathParam("userId") String userId, @QueryParam("start") int start,
+			@QueryParam("size") int size) {
+
+		try {
+
+			jsonArray = new JSONArray();
+			newObject = new JSONObject();
+
+			map = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "SELECT a.id id,a.companyname companyname,a.industryname industryname,a.question question,a.status status,a.created_by created_by,a.created_user created_user,a.created_uname created_uname,b.imgname FROM questions as a INNER JOIN user_login as b ON a.created_user=b.id AND a.created_user=?  order by created_by desc";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, userId);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				map.put("question", rs.getString("question").replaceAll("\\<.*?\\>", ""));
+
+				if (rs.getString("imgname").equals("")) {
+					map.put("questionimgname", "/images/avatar.png");
+				} else {
+					map.put("questionimgname", "/uploads/" + rs.getString("imgname"));
+				}
+
+				map.put("industryname", rs.getString("industryname"));
+				map.put("created_by", rs.getString("created_by"));
+				map.put("created_uname", rs.getString("created_uname"));
+				map.put("companyname", rs.getString("companyname"));
+				map.put("id", rs.getString("id"));
+				map.put("created_user", rs.getString("created_user"));
+
+				jsonArray.put(map);
+
+				for (int i = start; i <= size; i++) {
+					if (!jsonArray.isNull(i)) {
+						newObject.append("", jsonArray.getJSONObject(i));
+					}
+				}
+			}
+
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return newObject.toString();
+	}
+	
+	
+
+	@GET
+	@Path("/profileEvent/{userId}")
+	@Produces(MediaType.TEXT_HTML)
+	public String profileEvent(@PathParam("userId") String userId, @QueryParam("start") int start,
+			@QueryParam("size") int size) {
+
+		try {
+
+			jsonArray = new JSONArray();
+			newObject = new JSONObject();
+
+			map = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "SELECT a.id id,a.eventname eventname,a.eventtype eventtype,a.status status,a.Industry Industry,a.location location,a.datetime datetime,a.created_by created_by,a.created_user created_user,a.created_uname created_uname,b.imgname FROM events as a INNER JOIN user_login as b ON a.created_user=b.id AND a.created_user=? order by created_by desc";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, userId);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				map.put("eventname", rs.getString("eventname").replaceAll("\\<.*?\\>", ""));
+
+				if (rs.getString("imgname").equals("")) {
+					map.put("eventimgname", "/images/avatar.png");
+				} else {
+					map.put("eventimgname", "/uploads/" + rs.getString("imgname"));
+				}
+
+				map.put("datetime", rs.getString("datetime"));
+				map.put("location", rs.getString("location"));
+				map.put("id", rs.getString("id"));
+				map.put("Industry", rs.getString("Industry"));
+				map.put("created_user", rs.getString("created_user"));
+				map.put("created_uname", rs.getString("created_uname"));
+				map.put("created_by", rs.getString("created_by"));
+
+				jsonArray.put(map);
+
+				for (int i = start; i <= size; i++) {
+					if (!jsonArray.isNull(i)) {
+						newObject.append("", jsonArray.getJSONObject(i));
+					}
+				}
+			}
+
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return newObject.toString();
+	}
+
+	
 
 }
