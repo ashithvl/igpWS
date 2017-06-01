@@ -575,7 +575,7 @@ public class MainActivity {
 					map.put("companyname", rsInner.getString("companyname"));
 					map.put("subcategory", rsInner.getString("subcategory"));
 					map.put("subcategory", rsInner.getString("subcategory"));
-
+					map.put("created_uname", rsInner.getString("created_uname"));
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_by", rsInner.getString("created_by"));
 					
