@@ -463,7 +463,7 @@ public class Notification {
 						map.put("imgname", "/images/avatar.png");
 					} else {
 						map.put("imgname", "/uploads/" + rs.getString("imgname"));
-					}
+					} 
 					
 					
 					
