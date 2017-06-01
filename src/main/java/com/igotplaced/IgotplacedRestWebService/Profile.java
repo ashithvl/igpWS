@@ -3,7 +3,9 @@ package com.igotplaced.IgotplacedRestWebService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -49,7 +51,11 @@ public class Profile {
 
 			while (rs.next()) {
 
-				map.put("imgname", rs.getString("imgname"));
+				if (rs.getString("imgname").equals("")) {
+					map.put("imgname", "/images/avatar.png");
+				} else {
+					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+				}
 				map.put("fname", rs.getString("fname"));
 				map.put("department", rs.getString("department"));
 				map.put("college", rs.getString("college"));
@@ -76,72 +82,93 @@ public class Profile {
 
 		return jsonArray.toString();
 	}
-	/*
-	 * @GET
-	 * 
-	 * @Path("/profileInterviewExperience/{id}")
-	 * 
-	 * @Produces(MediaType.TEXT_HTML) public String
-	 * profileInterviewExperience(@PathParam("id") String id) {
-	 * 
-	 * try {
-	 * 
-	 * jsonArray = new JSONArray();
-	 * 
-	 * map = new HashMap<String, String>();
-	 * 
-	 * con = Constants.ConnectionOpen();
-	 * 
-	 * String sql =
-	 * "select * from `interview_exp` where user_id=? order by modified_by desc"
-	 * ;
-	 * 
-	 * PreparedStatement ps = con.prepareStatement(sql); ps.setString(1, id);
-	 * 
-	 * ResultSet rs = ps.executeQuery();
-	 * 
-	 * while (rs.next()) {
-	 * 
-	 * map.put("feedback", rs.getString("feedback")); map.put("industryname",
-	 * rs.getString("industryname")); map.put("interview_status",
-	 * rs.getString("interview_status")); map.put("companyname",
-	 * rs.getString("companyname")); map.put("user_id",
-	 * rs.getString("user_id"));
-	 * 
-	 * String sqlInner = "select * from `user_login` where id=?";
-	 * 
-	 * PreparedStatement psInner = con.prepareStatement(sqlInner);
-	 * psInner.setString(1, rs.getString("user_id"));
-	 * 
-	 * ResultSet rsInner = psInner.executeQuery();
-	 * 
-	 * while (rsInner.next()) {
-	 * 
-	 * map.put("created_user", rs.getString("created_user"));
-	 * map.put("username", rs.getString("username")); map.put("user_id",
-	 * rs.getString("user_id")); map.put("created_by",
-	 * rs.getString("created_by"));
-	 * 
-	 * if (rsInner.getString("imgname").equals("")) { map.put("imgname",
-	 * "/images/avatar.png"); } else { map.put("imgname", "/uploads/" +
-	 * rsInner.getString("imgname")); }
-	 * 
-	 * }
-	 * 
-	 * jsonArray.put(map);
-	 * 
-	 * }
-	 * 
-	 * con.close();
-	 * 
-	 * } catch (
-	 * 
-	 * Exception e) {
-	 * 
-	 * System.out.println(e); e.printStackTrace(); }
-	 * 
-	 * return jsonArray.toString(); }
-	 */
+
+	@GET
+	@Path("/profileEdit/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String profileEdit(@PathParam("id") String id) {
+
+		List<String> Company1List = null, Company2List = null, Company3List = null;
+		String company1 = "",company2 = "",company3 = "";
+
+		try {
+
+			jsonArray = new JSONArray();
+
+			map = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "SELECT * FROM `user_login` WHERE id=?";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, id);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				if (rs.getString("imgname").equals("")) {
+					map.put("imgname", "/images/avatar.png");
+				} else {
+					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+				}
+
+				if (!rs.getString("company1").equals("")) {
+					Company1List = Arrays.asList(rs.getString("company1").split(","));
+					if(!Company1List.isEmpty()){
+						company1 = Company1List.get(Company1List.size()-1);
+					}
+				}
+				
+				
+				if (!rs.getString("company1").equals("")) {
+					Company2List = Arrays.asList(rs.getString("company2").split(","));
+					
+					if(!Company2List.isEmpty()){
+						company2 = Company2List.get(Company2List.size()-1);
+					}
+				}
+				
+				if (!rs.getString("company1").equals("")) {
+					Company3List = Arrays.asList(rs.getString("company2").split(","));
+					
+					if(!Company3List.isEmpty()){
+						company3 = Company3List.get(Company3List.size()-1);
+					}
+				}
+
+				map.put("fname", rs.getString("fname"));
+				map.put("department", rs.getString("department"));
+				map.put("college", rs.getString("college"));
+				map.put("industry1", rs.getString("industry1"));
+				map.put("company1", company1);
+				map.put("industry2", rs.getString("industry2"));
+				map.put("company2", company2);
+				map.put("industry3", rs.getString("industry3"));
+				map.put("company3", company3);
+				map.put("interest", rs.getString("interest"));
+				map.put("email", rs.getString("email"));
+				map.put("passout", rs.getString("passout"));
+				map.put("phone", rs.getString("phone"));
+				map.put("location", rs.getString("location"));
+
+				jsonArray.put(map);
+
+			}
+
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return jsonArray.toString();
+	}
 
 	@GET
 	@Path("/profilePost/{userId}")
@@ -356,8 +383,6 @@ public class Profile {
 
 		return newObject.toString();
 	}
-	
-	
 
 	@GET
 	@Path("/profileEvent/{userId}")
@@ -419,7 +444,5 @@ public class Profile {
 
 		return newObject.toString();
 	}
-
-	
 
 }

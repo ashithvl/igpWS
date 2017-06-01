@@ -579,10 +579,6 @@ public class MainActivity {
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_by", rsInner.getString("created_by"));
 					
-					
-					
-	
-					
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
