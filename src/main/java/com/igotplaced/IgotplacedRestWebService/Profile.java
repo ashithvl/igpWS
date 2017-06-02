@@ -261,6 +261,7 @@ public class Profile {
 				map.put("pid", rs.getString("pid"));
 				map.put("post_created_user", rs.getString("created_user"));
 				map.put("created_by", rs.getString("created_by"));
+				map.put("pid", rs.getString("pid"));
 
 				if (rs.getString("imgname").equals("")) {
 					map.put("post_created_user_image", "/images/avatar.png");
@@ -359,6 +360,7 @@ public class Profile {
 				map.put("companyname", rs.getString("companyname"));
 				map.put("username", rs.getString("username"));
 				map.put("created_by", rs.getString("created_by"));
+				map.put("fid", rs.getString("id"));
 
 				jsonArray.put(map);
 
@@ -418,7 +420,7 @@ public class Profile {
 				map.put("created_by", rs.getString("created_by"));
 				map.put("created_uname", rs.getString("created_uname"));
 				map.put("companyname", rs.getString("companyname"));
-				map.put("id", rs.getString("id"));
+				map.put("qid", rs.getString("id"));
 				map.put("created_user", rs.getString("created_user"));
 
 				jsonArray.put(map);
@@ -476,7 +478,7 @@ public class Profile {
 
 				map.put("datetime", rs.getString("datetime"));
 				map.put("location", rs.getString("location"));
-				map.put("id", rs.getString("id"));
+				map.put("eid", rs.getString("id"));
 				map.put("Industry", rs.getString("Industry"));
 				map.put("created_user", rs.getString("created_user"));
 				map.put("created_uname", rs.getString("created_uname"));
