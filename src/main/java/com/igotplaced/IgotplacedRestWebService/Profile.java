@@ -286,12 +286,6 @@ public class Profile {
 					jsonArray.put(map);
 
 				}
-
-				for (int i = start; i <= size; i++) {
-					if (!jsonArray.isNull(i)) {
-						newObject.append("", jsonArray.getJSONObject(i));
-					}
-				}
 			}
 
 			con.close();
@@ -304,7 +298,7 @@ public class Profile {
 			e.printStackTrace();
 		}
 
-		return newObject.toString();
+		return jsonArray.toString();
 	}
 
 	@GET
@@ -365,11 +359,6 @@ public class Profile {
 
 				jsonArray.put(map);
 
-				for (int i = start; i <= size; i++) {
-					if (!jsonArray.isNull(i)) {
-						newObject.append("", jsonArray.getJSONObject(i));
-					}
-				}
 			}
 
 			con.close();
@@ -382,7 +371,7 @@ public class Profile {
 			e.printStackTrace();
 		}
 
-		return newObject.toString();
+		return jsonArray.toString();
 	}
 
 	@GET
@@ -426,11 +415,6 @@ public class Profile {
 
 				jsonArray.put(map);
 
-				for (int i = start; i <= size; i++) {
-					if (!jsonArray.isNull(i)) {
-						newObject.append("", jsonArray.getJSONObject(i));
-					}
-				}
 			}
 
 			con.close();
@@ -443,7 +427,7 @@ public class Profile {
 			e.printStackTrace();
 		}
 
-		return newObject.toString();
+		return jsonArray.toString();
 	}
 
 	@GET
@@ -506,11 +490,6 @@ public class Profile {
 
 				jsonArray.put(map);
 
-				for (int i = start; i <= size; i++) {
-					if (!jsonArray.isNull(i)) {
-						newObject.append("", jsonArray.getJSONObject(i));
-					}
-				}
 			}
 
 			con.close();
@@ -523,7 +502,7 @@ public class Profile {
 			e.printStackTrace();
 		}
 
-		return newObject.toString();
+		return jsonArray.toString();
 	}
 
 }
