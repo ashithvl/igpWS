@@ -23,8 +23,6 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.mysql.cj.api.jdbc.Statement;
-
 import utils.Constants;
 
 @Path("/profileService")
@@ -258,18 +256,16 @@ public class Profile {
 
 			ResultSet rs = ps.executeQuery();
 
-			while (rs.next()) {/*
-								 * 
-								 * System.out.println(rs.getString("post"));
-								 */
-				map.put("post", rs.getString("post"));
+			while (rs.next()) {
+				map.put("post", rs.getString("post").replaceAll("\\<.*?\\>", ""));
+				map.put("pid", rs.getString("pid"));
 				map.put("post_created_user", rs.getString("created_user"));
 				map.put("created_by", rs.getString("created_by"));
 
 				if (rs.getString("imgname").equals("")) {
-					map.put("imgname", "/images/avatar.png");
+					map.put("post_created_user_image", "/images/avatar.png");
 				} else {
-					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+					map.put("post_created_user_image", "/uploads/" + rs.getString("imgname"));
 				}
 
 				sqlInner = "select * from `post` where pid=?";

@@ -408,20 +408,7 @@ public class Notification {
 		return jsonArray.toString();
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
 	
 
 	@GET
@@ -480,7 +467,7 @@ public class Notification {
 						Cmap.put("Ccomments", rsInnerDeep.getString("comments"));
 						Cmap.put("Ccreated_by", rsInnerDeep.getString("created_by"));
 
-						if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("created_user").equals(id)) {
+						if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("user_id").equals(id)) {
 							Cmap.put("delete", "1");
 						}
 
