@@ -230,7 +230,7 @@ public class Profile {
 
 		return String.valueOf(result);
 	}
- 
+
 	@GET
 	@Path("/profilePost/{userId}")
 	@Produces(MediaType.TEXT_HTML)
@@ -485,22 +485,23 @@ public class Profile {
 				map.put("created_user", rs.getString("created_user"));
 				map.put("created_uname", rs.getString("created_uname"));
 				map.put("created_by", rs.getString("created_by"));
-				
-				String countSql = "SELECT * FROM `event_register` WHERE eventid=?";
+
+				String countSql = "SELECT * FROM `events` WHERE id=?";
 
 				PreparedStatement psevent = con.prepareStatement(countSql);
 				psevent.setString(1, rs.getString("id"));
 
 				ResultSet eventRs = psevent.executeQuery();
-				
-				while (eventRs.next()) {
 
-					if(eventRs.getInt(1) <= 0){
+				if (eventRs.next()) {
+
+					if (eventRs.getInt(1) <= 0) {
 						map.put("count", "Be First to Register");
-					}else{
-						map.put("count", eventRs.getInt(1)+" People going");
+					} else {
+						map.put("count", eventRs.getRow() + " People going");
 					}
-					
+				} else {
+					map.put("count", "Be First to Register");
 				}
 
 				jsonArray.put(map);

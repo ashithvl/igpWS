@@ -120,57 +120,62 @@ public class MainActivity {
 						}
 					}
 
-				/*	String sqlPc = "select imgname,department,college from user_login where id=?";
-
-					PreparedStatement psPc = con.prepareStatement(sqlPc);
-					psPc.setString(1, rsInner.getString("pid"));
-
-					ResultSet rsPc = psPc.executeQuery();
-
-					while (rsPc.next()) {
-
-						if (rsPc.getRow() > 1) {
-							pc = rsPc.getRow() - 2;
-						} else if (rsPc.getRow() == 1 || rsPc.getRow() == 0) {
-							pc = 0;
-						}
-
-					}
-
-					String sqlComment = "SELECT a.id id,a.pid pid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM post_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.pid=? LIMIT ?,2";
-
-					PreparedStatement psComment = con.prepareStatement(sqlComment);
-					psComment.setString(1, rsInner.getString("pid"));
-					psComment.setInt(2, pc);
-
-					ResultSet rsComment = psComment.executeQuery();
-
-					while (rsComment.next()) {
-
-						commentMap.put("commentuser_id", rsComment.getString("user_id"));
-						commentMap.put("commentcreated_uname", rsComment.getString("created_uname"));
-						commentMap.put("commentcomments", rsComment.getString("comments"));
-						commentMap.put("commentcreated_by", rsInner.getString("created_user"));
-						commentMap.put("commentuser_id", rsComment.getString("user_id"));
-						commentMap.put("commentid", rsComment.getString("id"));
-
-						if (rsComment.getString("imgname").equals("")) {
-							commentMap.put("commentuserimgname", "/images/avatar.png");
-						} else {
-							commentMap.put("commentuserimgname", "/uploads/" + rsComment.getString("imgname"));
-						}
-
-						if (rsInner.getString("created_user").equals(userId)
-								|| rsComment.getString("user_id").equals(userId)) {
-							commentMap.put("commentdelete", "1");
-						} else {
-							commentMap.put("commentdelete", "0");
-						}
-						
-						 * commentArray.put(commentMap);
-						 
-						commentArray.put(commentMap);
-					}*/
+					/*
+					 * String sqlPc =
+					 * "select imgname,department,college from user_login where id=?"
+					 * ;
+					 * 
+					 * PreparedStatement psPc = con.prepareStatement(sqlPc);
+					 * psPc.setString(1, rsInner.getString("pid"));
+					 * 
+					 * ResultSet rsPc = psPc.executeQuery();
+					 * 
+					 * while (rsPc.next()) {
+					 * 
+					 * if (rsPc.getRow() > 1) { pc = rsPc.getRow() - 2; } else
+					 * if (rsPc.getRow() == 1 || rsPc.getRow() == 0) { pc = 0; }
+					 * 
+					 * }
+					 * 
+					 * String sqlComment =
+					 * "SELECT a.id id,a.pid pid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM post_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.pid=? LIMIT ?,2"
+					 * ;
+					 * 
+					 * PreparedStatement psComment =
+					 * con.prepareStatement(sqlComment); psComment.setString(1,
+					 * rsInner.getString("pid")); psComment.setInt(2, pc);
+					 * 
+					 * ResultSet rsComment = psComment.executeQuery();
+					 * 
+					 * while (rsComment.next()) {
+					 * 
+					 * commentMap.put("commentuser_id",
+					 * rsComment.getString("user_id"));
+					 * commentMap.put("commentcreated_uname",
+					 * rsComment.getString("created_uname"));
+					 * commentMap.put("commentcomments",
+					 * rsComment.getString("comments"));
+					 * commentMap.put("commentcreated_by",
+					 * rsInner.getString("created_user"));
+					 * commentMap.put("commentuser_id",
+					 * rsComment.getString("user_id"));
+					 * commentMap.put("commentid", rsComment.getString("id"));
+					 * 
+					 * if (rsComment.getString("imgname").equals("")) {
+					 * commentMap.put("commentuserimgname",
+					 * "/images/avatar.png"); } else {
+					 * commentMap.put("commentuserimgname", "/uploads/" +
+					 * rsComment.getString("imgname")); }
+					 * 
+					 * if (rsInner.getString("created_user").equals(userId) ||
+					 * rsComment.getString("user_id").equals(userId)) {
+					 * commentMap.put("commentdelete", "1"); } else {
+					 * commentMap.put("commentdelete", "0"); }
+					 * 
+					 * commentArray.put(commentMap);
+					 * 
+					 * commentArray.put(commentMap); }
+					 */
 
 					jsonArray.put(map);
 
@@ -195,13 +200,6 @@ public class MainActivity {
 
 		return newObject.toString();
 	}
-	
-	
-	
-	
-	
-	
-	
 
 	@GET
 	@Path("/topPostComments/{userId}")
@@ -325,9 +323,9 @@ public class MainActivity {
 						} else {
 							commentMap.put("commentdelete", "0");
 						}
-						
-						 commentArray.put(commentMap);
-						 
+
+						commentArray.put(commentMap);
+
 						commentArray.put(commentMap);
 					}
 
@@ -421,7 +419,7 @@ public class MainActivity {
 
 					map.put("username", rsInner.getString("username"));
 					map.put("created_by", rsInner.getString("created_by"));
-					
+
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
@@ -437,60 +435,62 @@ public class MainActivity {
 							map.put("interviewUserImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 						}
 					}
-				
-		/*			String sqlPc = "SELECT * FROM `questn_comm` WHERE qid=? order by desc";
 
-					PreparedStatement psPc = con.prepareStatement(sqlPc);
-					psPc.setInt(1, rsInner.getInt("id"));
-
-					ResultSet rsPc = psPc.executeQuery();
-
-					while (rsPc.next()) {
-
-						if (rsPc.getRow() > 1) {
-							pc = rsPc.getRow() - 2;
-						} else if (rsPc.getRow() == 1 || rsPc.getRow() == 0) {
-							pc = 0;
-						}
-
-					}
-
-					String sqlquestion = "SELECT a.id id,a.qid qid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM questn_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.qid=? LIMIT ?,2";
-					PreparedStatement psquestion = con.prepareStatement(sqlquestion);
-					psquestion.setString(1, rsInner.getString("user_id"));
-					psquestion.setInt(2, pc);
-
-					ResultSet question = psquestion.executeQuery();
-
-					while (question.next()) {
-
-						commentMap.put("interviewExperienceUser_id", question.getString("user_id"));
-						commentMap.put("interviewExperiencecreated_uname",
-								question.getString("created_uname"));
-						commentMap.put("interviewExperiencecomments", question.getString("comments"));
-						commentMap.put("interviewExperiencecreated_by", rsInner.getString("created_user"));
-						commentMap.put("interviewExperienceuser_id", question.getString("created_by"));
-						commentMap.put("interviewExperienceid", question.getString("id"));
-
-						if (question.getString("imgname").equals("")) {
-							commentMap.put("commentuserimgname", "/images/avatar.png");
-						} else {
-							commentMap.put("commentuserimgname",
-									"/uploads/" + question.getString("imgname"));
-						}
-
-						if (rsInner.getString("created_user").equals(userId)
-								|| question.getString("user_id").equals(userId)) {
-							commentMap.put("interviewExperiencedelete", "1");
-						} else {
-							commentMap.put("interviewExperiencedelete", "0");
-						}
-						
-						 * commentArray.put(commentMap);
-						 
-						commentArray.put(commentMap);
-					}
-*/
+					/*
+					 * String sqlPc =
+					 * "SELECT * FROM `questn_comm` WHERE qid=? order by desc";
+					 * 
+					 * PreparedStatement psPc = con.prepareStatement(sqlPc);
+					 * psPc.setInt(1, rsInner.getInt("id"));
+					 * 
+					 * ResultSet rsPc = psPc.executeQuery();
+					 * 
+					 * while (rsPc.next()) {
+					 * 
+					 * if (rsPc.getRow() > 1) { pc = rsPc.getRow() - 2; } else
+					 * if (rsPc.getRow() == 1 || rsPc.getRow() == 0) { pc = 0; }
+					 * 
+					 * }
+					 * 
+					 * String sqlquestion =
+					 * "SELECT a.id id,a.qid qid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM questn_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.qid=? LIMIT ?,2"
+					 * ; PreparedStatement psquestion =
+					 * con.prepareStatement(sqlquestion);
+					 * psquestion.setString(1, rsInner.getString("user_id"));
+					 * psquestion.setInt(2, pc);
+					 * 
+					 * ResultSet question = psquestion.executeQuery();
+					 * 
+					 * while (question.next()) {
+					 * 
+					 * commentMap.put("interviewExperienceUser_id",
+					 * question.getString("user_id"));
+					 * commentMap.put("interviewExperiencecreated_uname",
+					 * question.getString("created_uname"));
+					 * commentMap.put("interviewExperiencecomments",
+					 * question.getString("comments"));
+					 * commentMap.put("interviewExperiencecreated_by",
+					 * rsInner.getString("created_user"));
+					 * commentMap.put("interviewExperienceuser_id",
+					 * question.getString("created_by"));
+					 * commentMap.put("interviewExperienceid",
+					 * question.getString("id"));
+					 * 
+					 * if (question.getString("imgname").equals("")) {
+					 * commentMap.put("commentuserimgname",
+					 * "/images/avatar.png"); } else {
+					 * commentMap.put("commentuserimgname", "/uploads/" +
+					 * question.getString("imgname")); }
+					 * 
+					 * if (rsInner.getString("created_user").equals(userId) ||
+					 * question.getString("user_id").equals(userId)) {
+					 * commentMap.put("interviewExperiencedelete", "1"); } else
+					 * { commentMap.put("interviewExperiencedelete", "0"); }
+					 * 
+					 * commentArray.put(commentMap);
+					 * 
+					 * commentArray.put(commentMap); }
+					 */
 					jsonArray.put(map);
 
 				}
@@ -585,7 +585,6 @@ public class MainActivity {
 					map.put("created_uname", rsInner.getString("created_uname"));
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_by", rsInner.getString("created_by"));
-					
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
@@ -603,63 +602,68 @@ public class MainActivity {
 						}
 					}
 
-					
-
-
-				/*	String sqlPc = "SELECT * FROM `interview_comm` WHERE iid=? order by desc ";
-
-					PreparedStatement psPc = con.prepareStatement(sqlPc);
-					psPc.setString(1, rsInner.getString("user_id"));
-
-					ResultSet rsPc = psPc.executeQuery();
-
-					while (rsPc.next()) {
-
-						if (rsPc.getRow() > 1) {
-							pc = rsPc.getRow() - 2;
-						} else if (rsPc.getRow() == 1 || rsPc.getRow() == 0) {
-							pc = 0;
-						}
-
-					}
-
-					String sqlinterviewExperiencet = "SELECT a.id id,a.iid iid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM interview_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.iid=? LIMIT ?,2";
-
-					PreparedStatement psinterviewExperience = con.prepareStatement(sqlinterviewExperiencet);
-					psinterviewExperience.setString(1, rsInner.getString("user_id"));
-					psinterviewExperience.setInt(2, pc);
-
-					ResultSet rsinterviewExperience = psinterviewExperience.executeQuery();
-
-					while (rsinterviewExperience.next()) {
-
-						commentMap.put("interviewExperienceUser_id", rsinterviewExperience.getString("user_id"));
-						commentMap.put("interviewExperiencecreated_uname",
-								rsinterviewExperience.getString("created_uname"));
-						commentMap.put("interviewExperiencecomments", rsinterviewExperience.getString("comments"));
-						commentMap.put("interviewExperiencecreated_by", rsInner.getString("created_user"));
-						commentMap.put("interviewExperienceuser_id", rsinterviewExperience.getString("created_by"));
-						commentMap.put("interviewExperienceid", rsinterviewExperience.getString("id"));
-
-						if (rsinterviewExperience.getString("imgname").equals("")) {
-							commentMap.put("commentuserimgname", "/images/avatar.png");
-						} else {
-							commentMap.put("commentuserimgname",
-									"/uploads/" + rsinterviewExperience.getString("imgname"));
-						}
-
-						if (rsInner.getString("created_user").equals(userId)
-								|| rsinterviewExperience.getString("user_id").equals(userId)) {
-							commentMap.put("interviewExperiencedelete", "1");
-						} else {
-							commentMap.put("interviewExperiencedelete", "0");
-						}
-						
-						 * commentArray.put(commentMap);
-						 
-						commentArray.put(commentMap);
-					}
-*/
+					/*
+					 * String sqlPc =
+					 * "SELECT * FROM `interview_comm` WHERE iid=? order by desc "
+					 * ;
+					 * 
+					 * PreparedStatement psPc = con.prepareStatement(sqlPc);
+					 * psPc.setString(1, rsInner.getString("user_id"));
+					 * 
+					 * ResultSet rsPc = psPc.executeQuery();
+					 * 
+					 * while (rsPc.next()) {
+					 * 
+					 * if (rsPc.getRow() > 1) { pc = rsPc.getRow() - 2; } else
+					 * if (rsPc.getRow() == 1 || rsPc.getRow() == 0) { pc = 0; }
+					 * 
+					 * }
+					 * 
+					 * String sqlinterviewExperiencet =
+					 * "SELECT a.id id,a.iid iid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM interview_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.iid=? LIMIT ?,2"
+					 * ;
+					 * 
+					 * PreparedStatement psinterviewExperience =
+					 * con.prepareStatement(sqlinterviewExperiencet);
+					 * psinterviewExperience.setString(1,
+					 * rsInner.getString("user_id"));
+					 * psinterviewExperience.setInt(2, pc);
+					 * 
+					 * ResultSet rsinterviewExperience =
+					 * psinterviewExperience.executeQuery();
+					 * 
+					 * while (rsinterviewExperience.next()) {
+					 * 
+					 * commentMap.put("interviewExperienceUser_id",
+					 * rsinterviewExperience.getString("user_id"));
+					 * commentMap.put("interviewExperiencecreated_uname",
+					 * rsinterviewExperience.getString("created_uname"));
+					 * commentMap.put("interviewExperiencecomments",
+					 * rsinterviewExperience.getString("comments"));
+					 * commentMap.put("interviewExperiencecreated_by",
+					 * rsInner.getString("created_user"));
+					 * commentMap.put("interviewExperienceuser_id",
+					 * rsinterviewExperience.getString("created_by"));
+					 * commentMap.put("interviewExperienceid",
+					 * rsinterviewExperience.getString("id"));
+					 * 
+					 * if
+					 * (rsinterviewExperience.getString("imgname").equals("")) {
+					 * commentMap.put("commentuserimgname",
+					 * "/images/avatar.png"); } else {
+					 * commentMap.put("commentuserimgname", "/uploads/" +
+					 * rsinterviewExperience.getString("imgname")); }
+					 * 
+					 * if (rsInner.getString("created_user").equals(userId) ||
+					 * rsinterviewExperience.getString("user_id").equals(userId)
+					 * ) { commentMap.put("interviewExperiencedelete", "1"); }
+					 * else { commentMap.put("interviewExperiencedelete", "0");
+					 * }
+					 * 
+					 * commentArray.put(commentMap);
+					 * 
+					 * commentArray.put(commentMap); }
+					 */
 					jsonArray.put(map);
 
 				}
@@ -683,8 +687,6 @@ public class MainActivity {
 
 		return newObject.toString();
 	}
-	
-	
 
 	@GET
 	@Path("/topEvent/{userId}")
@@ -760,7 +762,6 @@ public class MainActivity {
 					map.put("created_by", rsInner.getString("created_by"));
 					map.put("created_uname", rsInner.getString("created_uname"));
 
-
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
@@ -776,91 +777,98 @@ public class MainActivity {
 							map.put("eventImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 						}
 					}
-					
+
 					String eventDate = rsInner.getString("datetime");
-					
+
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					Date todaysDate = new Date();
-					
-					if((eventDate).compareTo(sdf.format(todaysDate)) < 0){
+
+					if ((eventDate).compareTo(sdf.format(todaysDate)) < 0) {
 						map.put("event", "Closed");
-					}else{
+					} else {
 						map.put("created_by", "I'm going");
 					}
-					
+
 					String countSql = "SELECT * FROM `event_register` WHERE eventid=?";
 
 					PreparedStatement psevent = con.prepareStatement(countSql);
 					psevent.setString(1, rsInner.getString("id"));
 
 					ResultSet eventRs = psevent.executeQuery();
-					
-					while (eventRs.next()) {
 
-						if(eventRs.getInt(1) <= 0){
+					if (eventRs.next()) {
+
+						if (eventRs.getInt(1) <= 0) {
 							map.put("count", "Be First to Register");
-						}else{
-							map.put("count", eventRs.getInt(1)+" People going");
-						}
-						
-					}
-
-					
-
-				/*	String sqlPc = "SELECT * FROM `interview_comm` WHERE iid=? order by desc ";
-
-					PreparedStatement psPc = con.prepareStatement(sqlPc);
-					psPc.setString(1, rsInner.getString("user_id"));
-
-					ResultSet rsPc = psPc.executeQuery();
-
-					while (rsPc.next()) {
-
-						if (rsPc.getRow() > 1) {
-							pc = rsPc.getRow() - 2;
-						} else if (rsPc.getRow() == 1 || rsPc.getRow() == 0) {
-							pc = 0;
-						}
-
-					}
-
-					String sqlinterviewExperiencet = "SELECT a.id id,a.iid iid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM interview_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.iid=? LIMIT ?,2";
-
-					PreparedStatement psinterviewExperience = con.prepareStatement(sqlinterviewExperiencet);
-					psinterviewExperience.setString(1, rsInner.getString("user_id"));
-					psinterviewExperience.setInt(2, pc);
-
-					ResultSet rsinterviewExperience = psinterviewExperience.executeQuery();
-
-					while (rsinterviewExperience.next()) {
-
-						commentMap.put("interviewExperienceUser_id", rsinterviewExperience.getString("user_id"));
-						commentMap.put("interviewExperiencecreated_uname",
-								rsinterviewExperience.getString("created_uname"));
-						commentMap.put("interviewExperiencecomments", rsinterviewExperience.getString("comments"));
-						commentMap.put("interviewExperiencecreated_by", rsInner.getString("created_user"));
-						commentMap.put("interviewExperienceuser_id", rsinterviewExperience.getString("created_by"));
-						commentMap.put("interviewExperienceid", rsinterviewExperience.getString("id"));
-
-						if (rsinterviewExperience.getString("imgname").equals("")) {
-							commentMap.put("commentuserimgname", "/images/avatar.png");
 						} else {
-							commentMap.put("commentuserimgname",
-									"/uploads/" + rsinterviewExperience.getString("imgname"));
+							map.put("count", eventRs.getRow() + " People going");
 						}
-
-						if (rsInner.getString("created_user").equals(userId)
-								|| rsinterviewExperience.getString("user_id").equals(userId)) {
-							commentMap.put("interviewExperiencedelete", "1");
-						} else {
-							commentMap.put("interviewExperiencedelete", "0");
-						}
-						
-						 * commentArray.put(commentMap);
-						 
-						commentArray.put(commentMap);
+					} else {
+						map.put("count", "Be First to Register");
 					}
-*/
+
+					/*
+					 * String sqlPc =
+					 * "SELECT * FROM `interview_comm` WHERE iid=? order by desc "
+					 * ;
+					 * 
+					 * PreparedStatement psPc = con.prepareStatement(sqlPc);
+					 * psPc.setString(1, rsInner.getString("user_id"));
+					 * 
+					 * ResultSet rsPc = psPc.executeQuery();
+					 * 
+					 * while (rsPc.next()) {
+					 * 
+					 * if (rsPc.getRow() > 1) { pc = rsPc.getRow() - 2; } else
+					 * if (rsPc.getRow() == 1 || rsPc.getRow() == 0) { pc = 0; }
+					 * 
+					 * }
+					 * 
+					 * String sqlinterviewExperiencet =
+					 * "SELECT a.id id,a.iid iid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM interview_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.iid=? LIMIT ?,2"
+					 * ;
+					 * 
+					 * PreparedStatement psinterviewExperience =
+					 * con.prepareStatement(sqlinterviewExperiencet);
+					 * psinterviewExperience.setString(1,
+					 * rsInner.getString("user_id"));
+					 * psinterviewExperience.setInt(2, pc);
+					 * 
+					 * ResultSet rsinterviewExperience =
+					 * psinterviewExperience.executeQuery();
+					 * 
+					 * while (rsinterviewExperience.next()) {
+					 * 
+					 * commentMap.put("interviewExperienceUser_id",
+					 * rsinterviewExperience.getString("user_id"));
+					 * commentMap.put("interviewExperiencecreated_uname",
+					 * rsinterviewExperience.getString("created_uname"));
+					 * commentMap.put("interviewExperiencecomments",
+					 * rsinterviewExperience.getString("comments"));
+					 * commentMap.put("interviewExperiencecreated_by",
+					 * rsInner.getString("created_user"));
+					 * commentMap.put("interviewExperienceuser_id",
+					 * rsinterviewExperience.getString("created_by"));
+					 * commentMap.put("interviewExperienceid",
+					 * rsinterviewExperience.getString("id"));
+					 * 
+					 * if
+					 * (rsinterviewExperience.getString("imgname").equals("")) {
+					 * commentMap.put("commentuserimgname",
+					 * "/images/avatar.png"); } else {
+					 * commentMap.put("commentuserimgname", "/uploads/" +
+					 * rsinterviewExperience.getString("imgname")); }
+					 * 
+					 * if (rsInner.getString("created_user").equals(userId) ||
+					 * rsinterviewExperience.getString("user_id").equals(userId)
+					 * ) { commentMap.put("interviewExperiencedelete", "1"); }
+					 * else { commentMap.put("interviewExperiencedelete", "0");
+					 * }
+					 * 
+					 * commentArray.put(commentMap);
+					 * 
+					 * commentArray.put(commentMap); }
+					 */
 					jsonArray.put(map);
 
 				}
@@ -884,7 +892,5 @@ public class MainActivity {
 
 		return newObject.toString();
 	}
-	
-	
 
 }
