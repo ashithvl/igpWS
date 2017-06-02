@@ -281,6 +281,7 @@ public class Profile {
 					map.put("Industry", rsInner.getString("Industry"));
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("companyname", rsInner.getString("companyname"));
+					map.put("created_uname", rsInner.getString("created_uname"));
 
 					jsonArray.put(map);
 
