@@ -23,6 +23,8 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.mysql.cj.api.jdbc.Statement;
+
 import utils.Constants;
 
 @Path("/profileService")
@@ -188,7 +190,7 @@ public class Profile {
 
 		int result = 0;
 		int rsLastGeneratedAutoIncrementId = 0;
-		String sqlInner;
+		String sqlInner= null;
 
 		try {
 
@@ -227,7 +229,6 @@ public class Profile {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return String.valueOf(result);
 	}
 
@@ -299,6 +300,53 @@ public class Profile {
 		}
 
 		return jsonArray.toString();
+	}
+	
+	@POST
+	@Path("/profilePost")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_HTML)
+	public String profilePost(@FormParam("post") String post, @FormParam("Industry") String Industry,
+			@FormParam("created_user") String created_user, @FormParam("company1") String company1,
+			@FormParam("created_uname") String created_uname) {
+
+		int result = 0;
+		String sqlInner = null;
+
+		try {
+			
+			int defaultValueInt = 0;
+			int typeValue=1;
+			int rsLastGeneratedAutoIncrementId = 0;
+			con = Constants.ConnectionOpen();
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			String dateTime = dtf.format(now);
+
+			sqlInner = "INSERT INTO post (post,Industry,companyname,status,created_by,created_user,modified_by,modified_user,created_uname,type)"
+			+"VALUES('" + post + "','" + Industry + "','" + company1 + "','" + defaultValueInt + "','" + dateTime + "','" + created_user + "','" + dateTime + "','" + created_user + "','"	+ created_uname + "','" + typeValue + "')";
+ 
+
+			PreparedStatement psInner = con.prepareStatement(sqlInner, Statement.RETURN_GENERATED_KEYS);
+
+			psInner.executeUpdate();
+			ResultSet rsInner = psInner.getGeneratedKeys();
+
+			if (rsInner.next()) {
+				rsLastGeneratedAutoIncrementId = rsInner.getInt(1);
+			}
+
+			result = rsLastGeneratedAutoIncrementId;
+
+			con.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return String.valueOf(result);
+	
 	}
 
 	@GET
@@ -373,6 +421,59 @@ public class Profile {
 
 		return jsonArray.toString();
 	}
+	
+	
+	@POST
+	@Path("/profileInterview")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_HTML)
+	public String profileInterview(@FormParam("feedback") String feedback, @FormParam("user_id") String user_id,
+			@FormParam("industryname") String industryname, @FormParam("companyname") String companyname,
+			@FormParam("username") String username,@FormParam("interview_status") String interview_status) {
+
+		int result = 0;
+		String sqlInner = null;
+		int rsLastGeneratedAutoIncrementId = 0;
+
+
+		try {
+			
+			int defaultValueInt = 0;
+			int typeValue=1;
+			
+			con = Constants.ConnectionOpen();
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			String dateTime = dtf.format(now);
+
+			sqlInner = "INSERT INTO interview_exp (user_id,username,industryname,companyname,feedback,interview_status,created_by,modified_by,modified_user)"
+			+"VALUES('" + user_id + "','" + username + "','" + industryname + "','" + companyname + "','" + feedback + "','" + interview_status + "','" + dateTime + "','" + dateTime + "','" + user_id + "')";
+ 
+			
+			PreparedStatement psInner = con.prepareStatement(sqlInner, Statement.RETURN_GENERATED_KEYS);
+
+			psInner.executeUpdate();
+			ResultSet rsInner = psInner.getGeneratedKeys();
+
+			if (rsInner.next()) {
+				rsLastGeneratedAutoIncrementId = rsInner.getInt(1);
+			}
+
+			result = rsLastGeneratedAutoIncrementId;
+
+			con.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return String.valueOf(result);
+	
+	}
+	
+	
+	
 
 	@GET
 	@Path("/profileQuestion/{userId}")
@@ -429,6 +530,57 @@ public class Profile {
 
 		return jsonArray.toString();
 	}
+	
+	@POST
+	@Path("/profileQuestions")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_HTML)
+	public String profileQuestions(@FormParam("question") String question, @FormParam("created_user") String created_user,
+			@FormParam("industryname") String industryname, @FormParam("companyname") String companyname,
+			@FormParam("created_uname") String created_uname) {
+
+		int result = 0;
+		String sqlInner = null;
+		int rsLastGeneratedAutoIncrementId = 0;
+
+
+		try {
+			
+			int defaultValueInt = 0;
+			int typeValue=1;
+			String category="";
+			
+			con = Constants.ConnectionOpen();
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			String dateTime = dtf.format(now);
+
+			sqlInner = "INSERT INTO questions (companyname,industryname,question,category,subcategory,status,created_by,created_user,modified_by,modified_user,created_uname)"
+			+"VALUES('" + companyname + "','" + industryname + "','" + question + "','" + category + "','" + category + "','" + defaultValueInt + "','" + dateTime + "','" + created_user + "','" + dateTime + "','"	+ created_user + "','" + created_uname + "')";
+ 
+			
+			PreparedStatement psInner = con.prepareStatement(sqlInner, Statement.RETURN_GENERATED_KEYS);
+
+			psInner.executeUpdate();
+			ResultSet rsInner = psInner.getGeneratedKeys();
+
+			if (rsInner.next()) {
+				rsLastGeneratedAutoIncrementId = rsInner.getInt(1);
+			}
+
+			result = rsLastGeneratedAutoIncrementId;
+
+			con.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return String.valueOf(result);
+	
+	}
+	
 
 	@GET
 	@Path("/profileEvent/{userId}")
