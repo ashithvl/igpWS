@@ -28,6 +28,13 @@ public class SpinnerValues {
 	List<String> companyList = new ArrayList<>();
 	JSONArray companyJSONArray = null;
 	
+	List<String> categoryList = new ArrayList<>();
+	JSONArray categoryJSONArray = null;
+	
+	List<String> subCategoryList = new ArrayList<>();
+	JSONArray subCcategoryJSONArray = null;
+	
+	
 	@GET
 	@Path("/yearofpassout")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -49,7 +56,7 @@ public class SpinnerValues {
 
 			con = Constants.ConnectionOpen();
 
-			String sql = "select companyname from company where industryname LIKE '%" + id + "%' LIMIT 5";
+			String sql = "select companyname from company where industryname LIKE '" + id + "%' LIMIT 5";
 
 			PreparedStatement ps = con.prepareStatement(sql);
 
@@ -110,5 +117,86 @@ public class SpinnerValues {
 		return industryJSONArray.toString();
 
 	}
+	
+	
+	
+	@GET
+	@Path("/category")
+	@Produces(MediaType.TEXT_HTML)
+	public String getCategory() {
+
+		try {
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "SELECT * FROM category WHERE status=0";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				categoryList.add(rs.getString("category"));
+
+			}
+			String[] category = categoryList.toArray(new String[categoryList.size()]);
+
+			categoryJSONArray = new JSONArray(Arrays.asList(category));
+
+			con.close();
+
+		} catch (Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return categoryJSONArray.toString();
+
+	}
+	
+	
+	@GET
+	@Path("/subCategory/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String subCategory(@PathParam("id") String id) {
+
+		try {
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "select subcategory from category where category LIKE '%" + id + "%'";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				
+				subCategoryList.add(rs.getString("subcategory"));
+
+			}
+			String[] subcategory = subCategoryList.toArray(new String[subCategoryList.size()]);
+
+			subCcategoryJSONArray = new JSONArray(Arrays.asList(subcategory));
+
+			con.close();
+
+		} catch (Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return subCcategoryJSONArray.toString();
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }

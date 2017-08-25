@@ -3,8 +3,10 @@ package com.igotplaced.IgotplacedRestWebService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,7 +175,6 @@ public class AutoCompleteValue {
 			ResultSet rs = ps.executeQuery();
 			
 			while (rs.next()) {
-System.out.println(rs.getString("Caption"));
 				
 				String caption=rs.getString("Caption");				
 
@@ -203,6 +204,14 @@ System.out.println(rs.getString("Caption"));
 							map.put("created_by", rspost.getString("created_by"));
 							map.put("created_uname", rspost.getString("created_uname"));
 						
+							String companyRequest = "SELECT * FROM `company` where companyname=?";
+
+							PreparedStatement psCompany = con.prepareStatement(companyRequest);
+							psCompany.setString(1, rspost.getString("companyname").replaceAll(",$", ""));
+							ResultSet rsCompany = psCompany.executeQuery();
+							while (rsCompany.next()) {
+								map.put("company_id", rsCompany.getString("id"));
+							}
 							String sqlInnerDeep = "select * from `user_login` where id=?";
 							
 							PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
@@ -223,7 +232,6 @@ System.out.println(rs.getString("Caption"));
 						jsonArray.put(map);
 						
 						newObject.append(caption, map);	
-						System.out.println(jsonArray);
 						}
 					
 					}
@@ -257,7 +265,14 @@ System.out.println(rs.getString("Caption"));
 						mapInterview.put("username", rsinterview.getString("username"));
 						mapInterview.put("created_by", rsinterview.getString("created_by"));	
 						
-						
+						String companyRequest = "SELECT * FROM `company` where companyname=?";
+
+						PreparedStatement psCompany = con.prepareStatement(companyRequest);
+						psCompany.setString(1,  rsinterview.getString("companyname").replaceAll(",$", ""));
+						ResultSet rsCompany = psCompany.executeQuery();
+						while (rsCompany.next()) {
+							mapInterview.put("company_id", rsCompany.getString("id"));
+						}
 						String sqlInnerDeep = "select * from `user_login` where id=?";
 
 						PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
@@ -312,6 +327,14 @@ System.out.println(rs.getString("Caption"));
 						mapQuestions.put("created_by", rsquestions.getString("created_by"));
 						
 						
+						String companyRequest = "SELECT * FROM `company` where companyname=?";
+
+						PreparedStatement psCompany = con.prepareStatement(companyRequest);
+						psCompany.setString(1, rsquestions.getString("companyname").replaceAll(",$", ""));
+						ResultSet rsCompany = psCompany.executeQuery();
+						while (rsCompany.next()) {
+							mapQuestions.put("company_id", rsCompany.getString("id"));
+						}
 
 						String sqlInnerDeep = "select * from `user_login` where id=?";
 
@@ -367,6 +390,14 @@ System.out.println(rs.getString("Caption"));
 						mapEvents.put("created_by", rsevents.getString("created_by"));
 						mapEvents.put("created_uname", rsevents.getString("created_uname"));
 						
+						String companyRequest = "SELECT * FROM `company` where companyname=?";
+
+						PreparedStatement psCompany = con.prepareStatement(companyRequest);
+						psCompany.setString(1, rsevents.getString("companyname").replaceAll(",$", ""));
+						ResultSet rsCompany = psCompany.executeQuery();
+						while (rsCompany.next()) {
+							mapEvents.put("company_id", rsCompany.getString("id"));
+						}
 						
 
 						String sqlInnerDeep = "select * from `user_login` where id=?";
@@ -383,6 +414,35 @@ System.out.println(rs.getString("Caption"));
 							} else {
 								mapEvents.put("eventImgName", "/uploads/" + rsInnerDeep.getString("imgname"));
 							}
+						}
+						
+						String eventDate = rsevents.getString("datetime");
+
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+						Date todaysDate = new Date();
+
+						if ((eventDate).compareTo(sdf.format(todaysDate)) < 0) {
+							mapEvents.put("event", "Closed");
+						} else {
+							mapEvents.put("created_by", "I'm going");
+						}
+
+						String countSql = "SELECT * FROM `event_register` WHERE eventid=?";
+
+						PreparedStatement psevent = con.prepareStatement(countSql);
+						psevent.setString(1, rsevents.getString("id"));
+
+						ResultSet eventRs = psevent.executeQuery();
+
+						if (eventRs.next()) {
+
+							if (eventRs.getInt(1) <= 0) {
+								mapEvents.put("count", "Be First to Register");
+							} else {
+								mapEvents.put("count", eventRs.getRow() + " People going");
+							}
+						} else {
+							mapEvents.put("count", "Be First to Register");
 						}
 
 						

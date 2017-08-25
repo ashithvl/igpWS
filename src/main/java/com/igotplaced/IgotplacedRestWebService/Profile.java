@@ -181,6 +181,45 @@ public class Profile {
 	}
 
 	@POST
+	@Path("/profileImageUpdate/{id}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_HTML)
+	public String profileImageUpdate(@FormParam("id") String id, @FormParam("url") String url) {
+
+		int result = 0;
+		int rsLastGeneratedAutoIncrementId = 0;
+		String sqlInner = null;
+
+		try {
+
+			con = Constants.ConnectionOpen();
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			LocalDateTime now = LocalDateTime.now();
+			String dateTime = dtf.format(now);
+
+			sqlInner = "UPDATE `user_login` SET imgname=? WHERE id=?";
+
+			PreparedStatement psInner = con.prepareStatement(sqlInner);
+
+			psInner.setString(1, "http://www.igotplaced.com/uploads/" + url);
+			psInner.setString(2, id);
+
+			System.out.println(url);
+			
+			
+			if (psInner.executeUpdate() > 0) {
+				result = 1;
+			}
+			con.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return String.valueOf(result);
+	}
+
+	@POST
 	@Path("/profileUpdate/{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_HTML)
@@ -624,7 +663,7 @@ public class Profile {
 
 			con = Constants.ConnectionOpen();
 
-			String sql = "SELECT a.id id,a.eventname eventname,a.notes notes,a.eventtype eventtype,a.status status,a.Industry Industry,a.location location,a.datetime datetime,a.created_by created_by,a.created_user created_user,a.created_uname created_uname,b.imgname FROM events as a INNER JOIN user_login as b ON a.created_user=b.id AND a.created_user=? order by created_by desc";
+			String sql = "SELECT a.id id,a.eventname eventname,a.companyname companyname,a.notes notes,a.eventtype eventtype,a.status status,a.Industry Industry,a.location location,a.datetime datetime,a.created_by created_by,a.created_user created_user,a.created_uname created_uname,b.imgname FROM events as a INNER JOIN user_login as b ON a.created_user=b.id AND a.created_user=? order by created_by desc";
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, userId);
 
@@ -649,7 +688,7 @@ public class Profile {
 				map.put("created_user", rs.getString("created_user"));
 				map.put("created_uname", rs.getString("created_uname"));
 				map.put("created_by", rs.getString("created_by"));
-
+				map.put("companyname", rs.getString("companyname"));
 				String countSql = "SELECT * FROM `events` WHERE id=?";
 
 				PreparedStatement psevent = con.prepareStatement(countSql);
@@ -832,19 +871,18 @@ public class Profile {
 			while (rs.next()) {
 				map.put("companyname", rs.getString("companyname").replace(",$", ""));
 				map.put("company_id", rs.getString("id"));
-				String companyNamePost=rs.getString("companyname").replace(",$", "");
-				
+				String companyNamePost = rs.getString("companyname").replace(",$", "");
+
 				sqlInner = "select * from `post` where companyname=?";
 
 				psInner = con.prepareStatement(sqlInner);
-				
+
 				psInner.setString(1, companyNamePost);
 
 				ResultSet rsInner = psInner.executeQuery();
-				
+
 				System.out.println(companyNamePost);
-				
-				
+
 				while (rsInner.next()) {
 
 					map.put("pid", rsInner.getString("pid"));
@@ -889,7 +927,6 @@ public class Profile {
 		return jsonArray.toString();
 	}
 
-	
 	@GET
 	@Path("/companyProfileInterview/{userId}")
 	@Produces(MediaType.TEXT_HTML)
@@ -917,19 +954,18 @@ public class Profile {
 			while (rs.next()) {
 				map.put("companyname", rs.getString("companyname").replace(",$", ""));
 				map.put("company_id", rs.getString("id"));
-				String companyNamePost=rs.getString("companyname").replace(",$", "");
-				
+				String companyNamePost = rs.getString("companyname").replace(",$", "");
+
 				sqlInner = "select * from `interview_exp` where companyname=?";
 
 				psInner = con.prepareStatement(sqlInner);
-				
+
 				psInner.setString(1, companyNamePost);
 
 				ResultSet rsInner = psInner.executeQuery();
-				
+
 				System.out.println(companyNamePost);
-				
-				
+
 				while (rsInner.next()) {
 
 					map.put("id", rsInner.getString("id"));
@@ -973,8 +1009,7 @@ public class Profile {
 
 		return jsonArray.toString();
 	}
-	
-	
+
 	@GET
 	@Path("/companyProfileQuestions/{userId}")
 	@Produces(MediaType.TEXT_HTML)
@@ -1002,18 +1037,18 @@ public class Profile {
 			while (rs.next()) {
 				map.put("companyname", rs.getString("companyname").replace(",$", ""));
 				map.put("company_id", rs.getString("id"));
-				String companyNamePost=rs.getString("companyname").replace(",$", "");
-				
+				String companyNamePost = rs.getString("companyname").replace(",$", "");
+
 				sqlInner = "select * from `questions` where companyname=?";
 
 				psInner = con.prepareStatement(sqlInner);
-				
+
 				psInner.setString(1, companyNamePost);
 
 				ResultSet rsInner = psInner.executeQuery();
-				
+
 				System.out.println(sqlInner);
-				
+
 				while (rsInner.next()) {
 
 					map.put("id", rsInner.getString("id"));
@@ -1022,8 +1057,7 @@ public class Profile {
 					map.put("created_user", rs.getString("created_user"));
 					map.put("created_uname", rsInner.getString("created_uname"));
 					map.put("created_by", rsInner.getString("created_by"));
-				
-														
+
 					System.out.println(rsInner.getString("created_user"));
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
@@ -1059,7 +1093,7 @@ public class Profile {
 
 		return jsonArray.toString();
 	}
-	
+
 	@GET
 	@Path("/companyProfileEvent/{userId}")
 	@Produces(MediaType.TEXT_HTML)
@@ -1087,19 +1121,18 @@ public class Profile {
 			while (rs.next()) {
 				map.put("companyname", rs.getString("companyname").replace(",$", ""));
 				map.put("company_id", rs.getString("id"));
-				String companyNamePost=rs.getString("companyname").replace(",$", "");
-				
+				String companyNamePost = rs.getString("companyname").replace(",$", "");
+
 				sqlInner = "select * from `events` where companyname=?";
 
 				psInner = con.prepareStatement(sqlInner);
-				
+
 				psInner.setString(1, companyNamePost);
 
 				ResultSet rsInner = psInner.executeQuery();
-				
+
 				System.out.println(companyNamePost);
-				
-				
+
 				while (rsInner.next()) {
 
 					map.put("datetime", rsInner.getString("datetime"));
@@ -1142,7 +1175,6 @@ public class Profile {
 						map.put("count", "Be First to Register");
 					}
 
-
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
@@ -1178,6 +1210,4 @@ public class Profile {
 		return jsonArray.toString();
 	}
 
-
-	
 }
