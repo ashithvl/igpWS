@@ -1,5 +1,7 @@
 package com.igotplaced.IgotplacedRestWebService;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,11 +9,13 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -22,6 +26,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.eclipse.persistence.internal.oxm.conversion.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -184,39 +189,55 @@ public class Profile {
 	@Path("/profileImageUpdate/{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_HTML)
-	public String profileImageUpdate(@FormParam("id") String id, @FormParam("url") String url) {
+	public String profileImageUpdate(@FormParam("id") String id, @FormParam("url") String url,
+			@FormParam("encodedImage") String encodedImage) {
 
 		int result = 0;
-		int rsLastGeneratedAutoIncrementId = 0;
-		String sqlInner = null;
 
-		try {
+		
 
-			con = Constants.ConnectionOpen();
+		String filePath = "E:\\Media Player\\"+id+".png";
+				 
+				  try { FileOutputStream fos = new FileOutputStream(filePath); 
+				  
+				  byte byteArray[] = Base64.base64Decode(encodedImage.getBytes());
+				  
+				  fos.write(byteArray);
+					 System.out.println(fos);
 
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-			LocalDateTime now = LocalDateTime.now();
-			String dateTime = dtf.format(now);
-
-			sqlInner = "UPDATE `user_login` SET imgname=? WHERE id=?";
-
-			PreparedStatement psInner = con.prepareStatement(sqlInner);
-
-			psInner.setString(1, "http://www.igotplaced.com/uploads/" + url);
-			psInner.setString(2, id);
-
-			System.out.println(url);
-			
-			
-			if (psInner.executeUpdate() > 0) {
-				result = 1;
-			}
-			con.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return String.valueOf(result);
+				   fos.close(); 
+				   } catch (Exception e) {
+					   
+				  e.printStackTrace(); 
+				  }
+	        
+	
+		/*
+		  int rsLastGeneratedAutoIncrementId = 0; String sqlInner = null;
+		  
+		  try {
+		  
+		  con = Constants.ConnectionOpen();
+		  
+		  DateTimeFormatter dtf =
+		  DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"); LocalDateTime now
+		  = LocalDateTime.now(); String dateTime = dtf.format(now);
+		  
+		  sqlInner = "UPDATE `user_login` SET imgname=? WHERE id=?";
+		  
+		  PreparedStatement psInner = con.prepareStatement(sqlInner);
+		  
+		  psInner.setString(1, id+".png");
+		  psInner.setString(2, id);
+		  
+		  System.out.println(url);
+		  
+		  
+		  if (psInner.executeUpdate() > 0) { result = 1; } con.close();
+		  
+		  } catch (Exception e) { e.printStackTrace(); }*/
+		
+		return String.valueOf(encodedImage);
 	}
 
 	@POST
