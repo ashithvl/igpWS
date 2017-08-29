@@ -194,49 +194,47 @@ public class Profile {
 
 		int result = 0;
 
-		
+		String filePath = "E:\\Media Player\\" + id + ".png";
 
-		String filePath = "E:\\Media Player\\"+id+".png";
-				 
-				  try { FileOutputStream fos = new FileOutputStream(filePath); 
-				  
-				  byte byteArray[] = Base64.base64Decode(encodedImage.getBytes());
-				  
-				  fos.write(byteArray);
-					 System.out.println(fos);
+		try {
+			FileOutputStream fos = new FileOutputStream(filePath);
 
-				   fos.close(); 
-				   } catch (Exception e) {
-					   
-				  e.printStackTrace(); 
-				  }
-	        
-	
+			byte byteArray[] = Base64.base64Decode(encodedImage.getBytes());
+
+			fos.write(byteArray);
+			System.out.println(fos);
+
+			fos.close();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
 		/*
-		  int rsLastGeneratedAutoIncrementId = 0; String sqlInner = null;
-		  
-		  try {
-		  
-		  con = Constants.ConnectionOpen();
-		  
-		  DateTimeFormatter dtf =
-		  DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"); LocalDateTime now
-		  = LocalDateTime.now(); String dateTime = dtf.format(now);
-		  
-		  sqlInner = "UPDATE `user_login` SET imgname=? WHERE id=?";
-		  
-		  PreparedStatement psInner = con.prepareStatement(sqlInner);
-		  
-		  psInner.setString(1, id+".png");
-		  psInner.setString(2, id);
-		  
-		  System.out.println(url);
-		  
-		  
-		  if (psInner.executeUpdate() > 0) { result = 1; } con.close();
-		  
-		  } catch (Exception e) { e.printStackTrace(); }*/
-		
+		 * int rsLastGeneratedAutoIncrementId = 0; String sqlInner = null;
+		 * 
+		 * try {
+		 * 
+		 * con = Constants.ConnectionOpen();
+		 * 
+		 * DateTimeFormatter dtf =
+		 * DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"); LocalDateTime now
+		 * = LocalDateTime.now(); String dateTime = dtf.format(now);
+		 * 
+		 * sqlInner = "UPDATE `user_login` SET imgname=? WHERE id=?";
+		 * 
+		 * PreparedStatement psInner = con.prepareStatement(sqlInner);
+		 * 
+		 * psInner.setString(1, id+".png"); psInner.setString(2, id);
+		 * 
+		 * System.out.println(url);
+		 * 
+		 * 
+		 * if (psInner.executeUpdate() > 0) { result = 1; } con.close();
+		 * 
+		 * } catch (Exception e) { e.printStackTrace(); }
+		 */
+
 		return String.valueOf(encodedImage);
 	}
 
@@ -345,7 +343,9 @@ public class Profile {
 
 					map.put("Industry", rsInner.getString("Industry"));
 					map.put("created_user", rsInner.getString("created_user"));
-					map.put("companyname", rsInner.getString("companyname").replace(",$", ""));
+					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
+
+					map.put("companyname", companyName);
 					map.put("created_uname", rsInner.getString("created_uname"));
 
 					String companyRequest = "SELECT * FROM `company` where companyname=?";
@@ -475,7 +475,8 @@ public class Profile {
 
 				map.put("industryname", rs.getString("industryname"));
 				map.put("user_id", rs.getString("user_id"));
-				map.put("companyname", rs.getString("companyname").replace(",$", ""));
+				String companyInterview = rs.getString("companyname").replaceAll(",$", "");
+				map.put("companyname", companyInterview);
 				map.put("username", rs.getString("username"));
 				map.put("created_by", rs.getString("created_by"));
 				map.put("fid", rs.getString("id"));
@@ -589,7 +590,7 @@ public class Profile {
 				map.put("industryname", rs.getString("industryname"));
 				map.put("created_by", rs.getString("created_by"));
 				map.put("created_uname", rs.getString("created_uname"));
-				map.put("companyname", rs.getString("companyname").replace(",$", ""));
+				map.put("companyname",rs.getString("companyname").replaceAll(",$", ""));
 				map.put("qid", rs.getString("id"));
 				map.put("created_user", rs.getString("created_user"));
 
@@ -1054,12 +1055,12 @@ public class Profile {
 			// ps.setString(1, userId);
 
 			ResultSet rs = ps.executeQuery();
-			System.out.println(sql);
+			
 			while (rs.next()) {
-				map.put("companyname", rs.getString("companyname").replace(",$", ""));
+				map.put("companyname", rs.getString("companyname"));
 				map.put("company_id", rs.getString("id"));
-				String companyNamePost = rs.getString("companyname").replace(",$", "");
-
+				String companyNamePost = rs.getString("companyname");
+				System.out.println(companyNamePost);
 				sqlInner = "select * from `questions` where companyname=?";
 
 				psInner = con.prepareStatement(sqlInner);
@@ -1068,18 +1069,18 @@ public class Profile {
 
 				ResultSet rsInner = psInner.executeQuery();
 
-				System.out.println(sqlInner);
+				
 
 				while (rsInner.next()) {
 
 					map.put("id", rsInner.getString("id"));
 					map.put("question", rsInner.getString("question").replaceAll("\\<.*?\\>", ""));
 					map.put("industryname", rsInner.getString("industryname"));
-					map.put("created_user", rs.getString("created_user"));
+					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_uname", rsInner.getString("created_uname"));
 					map.put("created_by", rsInner.getString("created_by"));
-
-					System.out.println(rsInner.getString("created_user"));
+					
+					
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);

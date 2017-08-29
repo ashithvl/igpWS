@@ -3,6 +3,8 @@ package com.igotplaced.IgotplacedRestWebService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,65 +123,72 @@ public class Notification {
 
 			con = Constants.ConnectionOpen();
 
+			String sql = "SELECT a.pid pid,a.post post,a.status status,a.created_by created_by,a.Industry Industry,a.companyname companyname,a.created_user created_user,a.created_uname created_uname,b.imgname FROM post as a INNER JOIN user_login as b ON a.created_user=b.id and a.pid=?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, id);
 
-				String sql = "SELECT a.pid pid,a.post post,a.status status,a.created_by created_by,a.Industry Industry,a.companyname companyname,a.created_user created_user,a.created_uname created_uname,b.imgname FROM post as a INNER JOIN user_login as b ON a.created_user=b.id and a.pid=?";
-				PreparedStatement ps = con.prepareStatement(sql);
-				ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
 
-				ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
 
-				while (rs.next()) {
+				map.put("post", rs.getString("post").replaceAll("\\<.*?\\>", ""));
+				map.put("Industry", rs.getString("Industry"));
+				map.put("companyname", rs.getString("companyname").replaceAll(",$", ""));
+				map.put("created_user", rs.getString("created_user"));
+				map.put("created_uname", rs.getString("created_uname"));
+				map.put("created_by", rs.getString("created_by"));
+				map.put("pid", id);
 
-					map.put("post", rs.getString("post").replaceAll("\\<.*?\\>", ""));
-					map.put("Industry", rs.getString("Industry"));
-					map.put("companyname", rs.getString("companyname"));
-					map.put("created_user", rs.getString("created_user"));
-					map.put("created_uname", rs.getString("created_uname"));
-					map.put("created_by", rs.getString("created_by"));
-					map.put("companyname", rs.getString("companyname"));
+				if (rs.getString("imgname").equals("")) {
+					map.put("imgname", "/images/avatar.png");
+				} else {
+					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+				}
 
-					if (rs.getString("imgname").equals("")) {
-						map.put("imgname", "/images/avatar.png");
+				String companyRequest = "SELECT * FROM `company` where companyname=?";
+
+				PreparedStatement psCompany = con.prepareStatement(companyRequest);
+				psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
+				ResultSet rsCompany = psCompany.executeQuery();
+				while (rsCompany.next()) {
+					map.put("company_id", rsCompany.getString("id"));
+				}
+
+				String sqlInnerDeep = "SELECT a.id id,a.pid pid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM post_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.pid=?";
+
+				PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
+				psInnerDeep.setString(1, id);
+
+				ResultSet rsInnerDeep = psInnerDeep.executeQuery();
+
+				while (rsInnerDeep.next()) {
+
+					map.put("Cuser_id", rsInnerDeep.getString("user_id"));
+					map.put("Ccreated_uname", rsInnerDeep.getString("created_uname"));
+					map.put("Ccomments", rsInnerDeep.getString("comments"));
+					map.put("Ccreated_by", rsInnerDeep.getString("created_by"));
+
+					if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("created_user").equals(id)) {
+						map.put("delete", "1");
+					}
+
+					if (rsInnerDeep.getString("imgname").equals("")) {
+						map.put("postCommentuserimgname", "/images/avatar.png");
 					} else {
-						map.put("imgname", "/uploads/" + rs.getString("imgname"));
+						map.put("postCommentuserimgname", "/uploads/" + rsInnerDeep.getString("imgname"));
 					}
 
-					String sqlInnerDeep = "SELECT a.id id,a.pid pid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM post_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.pid=?";
+					// CjsonArray.put(Cmap);
+				}
 
-					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, id);
-
-					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
-
-					while (rsInnerDeep.next()) {
-
-						Cmap.put("Cuser_id", rsInnerDeep.getString("user_id"));
-						Cmap.put("Ccreated_uname", rsInnerDeep.getString("created_uname"));
-						Cmap.put("Ccomments", rsInnerDeep.getString("comments"));
-						Cmap.put("Ccreated_by", rsInnerDeep.getString("created_by"));
-
-						if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("created_user").equals(id)) {
-							Cmap.put("delete", "1");
-						}
-
-						if (rsInnerDeep.getString("imgname").equals("")) {
-							Cmap.put("postCommentuserimgname", "/images/avatar.png");
-						} else {
-							Cmap.put("postCommentuserimgname", "/uploads/" + rsInnerDeep.getString("imgname"));
-						}
-
-						CjsonArray.put(Cmap);
-					}
-					
-					for (int i = 0; i < CjsonArray.length(); i++) {            
-						jsonArray.put(CjsonArray.get(i));
-						
-				    }
-
-
-					jsonArray.put(map);
+				for (int i = 0; i < CjsonArray.length(); i++) {
+					jsonArray.put(CjsonArray.get(i));
 
 				}
+
+				jsonArray.put(map);
+
+			}
 
 			con.close();
 
@@ -193,13 +202,6 @@ public class Notification {
 
 		return jsonArray.toString();
 	}
-
-	
-	
-	
-	
-	
-	
 
 	@GET
 	@Path("/eventPopUp/{id}")
@@ -219,79 +221,103 @@ public class Notification {
 
 			con = Constants.ConnectionOpen();
 
+			String sql = "SELECT a.id id,a.eventname eventname,a.eventtype eventtype,a.status status,a.Industry Industry,a.location location,a.datetime datetime,a.notes notes, a.created_by created_by,a.created_user created_user,a.created_uname created_uname,b.imgname FROM events as a INNER JOIN user_login as b ON a.created_user=b.id AND a.id=?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, id);
 
-				String sql = "SELECT a.id id,a.eventname eventname,a.eventtype eventtype,a.status status,a.Industry Industry,a.location location,a.datetime datetime,a.notes notes, a.created_by created_by,a.created_user created_user,a.created_uname created_uname,b.imgname FROM events as a INNER JOIN user_login as b ON a.created_user=b.id AND a.id=?";
-				PreparedStatement ps = con.prepareStatement(sql);
-				ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
 
-				ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
 
-				while (rs.next()) {
+				map.put("eventname", rs.getString("eventname"));
+				map.put("datetime", rs.getString("datetime"));
+				map.put("eventtype", rs.getString("eventtype"));
+				map.put("location", rs.getString("location"));
+				map.put("notes", rs.getString("notes").replaceAll("\\<.*?\\>", ""));
+				map.put("id", rs.getString("id"));
+				map.put("Industry", rs.getString("Industry"));
+				// map.put("companyname", rs.getString("companyname"));
+				map.put("created_uname", rs.getString("created_uname"));
+				map.put("created_by", rs.getString("created_by"));
 
-					map.put("eventname", rs.getString("eventname"));
-					map.put("datetime", rs.getString("datetime"));
-					map.put("eventtype", rs.getString("eventtype"));
-					map.put("location", rs.getString("location"));
-					map.put("notes", rs.getString("notes").replaceAll("\\<.*?\\>", ""));
-					map.put("id", rs.getString("id"));
-					map.put("Industry", rs.getString("Industry"));
-					//map.put("companyname", rs.getString("companyname"));
-					map.put("created_uname", rs.getString("created_uname"));
-					map.put("created_by", rs.getString("created_by"));
+				if (rs.getString("imgname").equals("")) {
+					map.put("imgname", "/images/avatar.png");
+				} else {
+					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+				}
 
-					if (rs.getString("imgname").equals("")) {
-						map.put("imgname", "/images/avatar.png");
-					} else {
-						map.put("imgname", "/uploads/" + rs.getString("imgname"));
-					}
-					
-					String sqlInner = "SELECT * FROM `event_register` WHERE eventid=?";
-					PreparedStatement psInner = con.prepareStatement(sqlInner);
-					psInner.setString(1, rs.getString("id"));
+				String cName = rs.getString("created_uname");
 
-					ResultSet rsInner = psInner.executeQuery();
+				String sqlUserDeep = "select * from `user_login` where fname=?";
 
-					while (rsInner.next()) {
+				PreparedStatement psInnerUserDeep = con.prepareStatement(sqlUserDeep);
+				psInnerUserDeep.setString(1, cName);
 
-						map.put("reg_count", String.valueOf(rsInner.getRow()));
+				ResultSet rsInnerUserDeep = psInnerUserDeep.executeQuery();
 
-					}
+				while (rsInnerUserDeep.next()) {
 
-					String sqlInnerDeep = "SELECT a.id id,a.eid eid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM event_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.eid=?";
-					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, id);
-
-					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
-
-					while (rsInnerDeep.next()) {
-
-						Cmap.put("Cuser_id", rsInnerDeep.getString("user_id"));
-						Cmap.put("Ccreated_uname", rsInnerDeep.getString("created_uname"));
-						Cmap.put("Ccomments", rsInnerDeep.getString("comments"));
-						Cmap.put("Ccreated_by", rsInnerDeep.getString("created_by"));
-
-						if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("created_user").equals(id)) {
-							Cmap.put("delete", "1");
-						}
-
-						if (rsInnerDeep.getString("imgname").equals("")) {
-							Cmap.put("eventCommentuserimgname", "/images/avatar.png");
-						} else {
-							Cmap.put("eventCommentuserimgname", "/uploads/" + rsInnerDeep.getString("imgname"));
-						}
-
-						CjsonArray.put(Cmap);
-					}
-					
-					for (int i = 0; i < CjsonArray.length(); i++) {            
-						jsonArray.put(CjsonArray.get(i));
-						
-				    }
-
-
-					jsonArray.put(map);
+					map.put("userid", rsInnerUserDeep.getString("id"));
 
 				}
+
+				String sqlInner = "SELECT * FROM `event_register` WHERE eventid=?";
+				PreparedStatement psInner = con.prepareStatement(sqlInner);
+				psInner.setString(1, rs.getString("id"));
+
+				ResultSet rsInner = psInner.executeQuery();
+
+				while (rsInner.next()) {
+
+					map.put("reg_count", "" + String.valueOf(rsInner.getRow()) + " People going");
+
+				}
+
+				String eventDate = rs.getString("datetime");
+
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				Date todaysDate = new Date();
+
+				if ((eventDate).compareTo(sdf.format(todaysDate)) < 0) {
+					map.put("event", "Closed");
+				} else {
+					map.put("event", "I'm going");
+				}
+
+				String sqlInnerDeep = "SELECT a.id id,a.eid eid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM event_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.eid=?";
+				PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
+				psInnerDeep.setString(1, id);
+
+				ResultSet rsInnerDeep = psInnerDeep.executeQuery();
+
+				while (rsInnerDeep.next()) {
+
+					map.put("Cuser_id", rsInnerDeep.getString("user_id"));
+					map.put("Ccreated_uname", rsInnerDeep.getString("created_uname"));
+					map.put("Ccomments", rsInnerDeep.getString("comments"));
+					map.put("Ccreated_by", rsInnerDeep.getString("created_by"));
+
+					if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("created_user").equals(id)) {
+						map.put("delete", "1");
+					}
+
+					if (rsInnerDeep.getString("imgname").equals("")) {
+						map.put("eventCommentuserimgname", "/images/avatar.png");
+					} else {
+						map.put("eventCommentuserimgname", "/uploads/" + rsInnerDeep.getString("imgname"));
+					}
+
+					// CjsonArray.put(Cmap);
+				}
+
+				for (int i = 0; i < CjsonArray.length(); i++) {
+					jsonArray.put(CjsonArray.get(i));
+
+				}
+
+				jsonArray.put(map);
+
+			}
 
 			con.close();
 
@@ -305,19 +331,6 @@ public class Notification {
 
 		return jsonArray.toString();
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
 
 	@GET
 	@Path("/questionPopUp/{id}")
@@ -337,63 +350,70 @@ public class Notification {
 
 			con = Constants.ConnectionOpen();
 
+			String sql = "SELECT a.id id,a.companyname companyname,a.industryname industryname,a.question question,a.status status,a.created_by created_by,a.created_user created_user,a.created_uname created_uname,b.imgname FROM questions as a INNER JOIN user_login as b ON a.created_user=b.id  AND a.id=?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, id);
 
-				String sql = "SELECT a.id id,a.companyname companyname,a.industryname industryname,a.question question,a.status status,a.created_by created_by,a.created_user created_user,a.created_uname created_uname,b.imgname FROM questions as a INNER JOIN user_login as b ON a.created_user=b.id  AND a.id=?";
-				PreparedStatement ps = con.prepareStatement(sql);
-				ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
 
-				ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
 
-				while (rs.next()) {
+				map.put("question", rs.getString("question").replaceAll("\\<.*?\\>", ""));
+				map.put("industryname", rs.getString("industryname"));
+				map.put("companyname", rs.getString("companyname").replaceAll(",$", ""));
+				map.put("qid", id);
+				map.put("created_uname", rs.getString("created_uname"));
+				map.put("created_by", rs.getString("created_by"));
 
-					map.put("question", rs.getString("question").replaceAll("\\<.*?\\>", ""));
-					map.put("industryname", rs.getString("industryname"));
-					map.put("companyname", rs.getString("companyname"));
-					//map.put("companyname", rs.getString("companyname"));
-					map.put("created_uname", rs.getString("created_uname"));
-					map.put("created_by", rs.getString("created_by"));
+				if (rs.getString("imgname").equals("")) {
+					map.put("imgname", "/images/avatar.png");
+				} else {
+					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+				}
 
-					if (rs.getString("imgname").equals("")) {
-						map.put("imgname", "/images/avatar.png");
+				String companyRequest = "SELECT * FROM `company` where companyname=?";
+
+				PreparedStatement psCompany = con.prepareStatement(companyRequest);
+				psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
+				ResultSet rsCompany = psCompany.executeQuery();
+				while (rsCompany.next()) {
+					map.put("company_id", rsCompany.getString("id"));
+				}
+
+				String sqlInnerDeep = "SELECT a.id id,a.qid qid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM questn_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.qid=?";
+				PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
+				psInnerDeep.setString(1, id);
+
+				ResultSet rsInnerDeep = psInnerDeep.executeQuery();
+
+				while (rsInnerDeep.next()) {
+
+					map.put("Cuser_id", rsInnerDeep.getString("user_id"));
+					map.put("Ccreated_uname", rsInnerDeep.getString("created_uname"));
+					map.put("Ccomments", rsInnerDeep.getString("comments"));
+					map.put("Ccreated_by", rsInnerDeep.getString("created_by"));
+
+					if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("created_user").equals(id)) {
+						map.put("delete", "1");
+					}
+
+					if (rsInnerDeep.getString("imgname").equals("")) {
+						map.put("questionCommentuserimgname", "/images/avatar.png");
 					} else {
-						map.put("imgname", "/uploads/" + rs.getString("imgname"));
+						map.put("questionCommentuserimgname", "/uploads/" + rsInnerDeep.getString("imgname"));
 					}
-					
-					String sqlInnerDeep = "SELECT a.id id,a.qid qid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM questn_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.qid=?";
-					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, id);
 
-					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
+					// CjsonArray.put(map);
+				}
 
-					while (rsInnerDeep.next()) {
-
-						Cmap.put("Cuser_id", rsInnerDeep.getString("user_id"));
-						Cmap.put("Ccreated_uname", rsInnerDeep.getString("created_uname"));
-						Cmap.put("Ccomments", rsInnerDeep.getString("comments"));
-						Cmap.put("Ccreated_by", rsInnerDeep.getString("created_by"));
-
-						if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("created_user").equals(id)) {
-							Cmap.put("delete", "1");
-						}
-
-						if (rsInnerDeep.getString("imgname").equals("")) {
-							Cmap.put("questionCommentuserimgname", "/images/avatar.png");
-						} else {
-							Cmap.put("questionCommentuserimgname", "/uploads/" + rsInnerDeep.getString("imgname"));
-						}
-
-						CjsonArray.put(Cmap);
-					}
-					
-					for (int i = 0; i < CjsonArray.length(); i++) {            
-						jsonArray.put(CjsonArray.get(i));
-						
-				    }
-
-
-					jsonArray.put(map);
+				for (int i = 0; i < CjsonArray.length(); i++) {
+					jsonArray.put(CjsonArray.get(i));
 
 				}
+
+				jsonArray.put(map);
+
+			}
 
 			con.close();
 
@@ -407,9 +427,6 @@ public class Notification {
 
 		return jsonArray.toString();
 	}
-
-
-	
 
 	@GET
 	@Path("/interviewExperiencePopUp/{id}")
@@ -429,66 +446,72 @@ public class Notification {
 
 			con = Constants.ConnectionOpen();
 
+			String sql = "SELECT a.id id,a.companyname companyname,a.industryname industryname,a.feedback feedback,a.interview_status interview_status,a.created_by created_by,a.user_id user_id,a.username username,b.imgname FROM interview_exp as a INNER JOIN user_login as b ON a.user_id=b.id  AND a.id=?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, id);
 
-				String sql = "SELECT a.id id,a.companyname companyname,a.industryname industryname,a.feedback feedback,a.interview_status interview_status,a.created_by created_by,a.user_id user_id,a.username username,b.imgname FROM interview_exp as a INNER JOIN user_login as b ON a.user_id=b.id  AND a.id=?";
-				PreparedStatement ps = con.prepareStatement(sql);
-				ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
 
-				ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
 
-				while (rs.next()) {
+				map.put("feedback", rs.getString("feedback").replaceAll("\\<.*?\\>", ""));
+				map.put("interview_status", rs.getString("interview_status"));
+				map.put("companyname", rs.getString("companyname"));
+				map.put("industryname", rs.getString("industryname"));
+				map.put("created_by", rs.getString("created_by"));
+				map.put("username", rs.getString("username"));
+				map.put("user_id", rs.getString("user_id"));
 
-					map.put("feedback", rs.getString("feedback").replaceAll("\\<.*?\\>", ""));
-					map.put("interview_status", rs.getString("interview_status"));
-					map.put("companyname", rs.getString("companyname"));
-					map.put("industryname", rs.getString("industryname"));
-					map.put("created_by", rs.getString("created_by"));
-					map.put("username", rs.getString("username"));
-					map.put("user_id", rs.getString("user_id"));
+				if (rs.getString("imgname").equals("")) {
+					map.put("imgname", "/images/avatar.png");
+				} else {
+					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+				}
 
-					if (rs.getString("imgname").equals("")) {
-						map.put("imgname", "/images/avatar.png");
-					} else {
-						map.put("imgname", "/uploads/" + rs.getString("imgname"));
-					} 
-					
-					
-					
-					String sqlInnerDeep = "SELECT a.id id,a.iid iid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM interview_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.iid=?";
-					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
-					psInnerDeep.setString(1, id);
+				String companyRequest = "SELECT * FROM `company` where companyname=?";
 
-					ResultSet rsInnerDeep = psInnerDeep.executeQuery();
+				PreparedStatement psCompany = con.prepareStatement(companyRequest);
+				psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
+				ResultSet rsCompany = psCompany.executeQuery();
+				while (rsCompany.next()) {
+					map.put("company_id", rsCompany.getString("id"));
+				}
 
-					while (rsInnerDeep.next()) {
+				String sqlInnerDeep = "SELECT a.id id,a.iid iid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM interview_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.iid=?";
+				PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
+				psInnerDeep.setString(1, id);
 
-						Cmap.put("Cuser_id", rsInnerDeep.getString("user_id"));
-						Cmap.put("Ccreated_uname", rsInnerDeep.getString("created_uname"));
-						Cmap.put("Ccomments", rsInnerDeep.getString("comments"));
-						Cmap.put("Ccreated_by", rsInnerDeep.getString("created_by"));
+				ResultSet rsInnerDeep = psInnerDeep.executeQuery();
 
-						if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("user_id").equals(id)) {
-							Cmap.put("delete", "1");
-						}
+				while (rsInnerDeep.next()) {
 
-						if (rsInnerDeep.getString("imgname").equals("")) {
-							Cmap.put("interviewExperienceCommentuserimgname", "/images/avatar.png");
-						} else {
-							Cmap.put("interviewExperienceCommentuserimgname", "/uploads/" + rsInnerDeep.getString("imgname"));
-						}
+					Cmap.put("Cuser_id", rsInnerDeep.getString("user_id"));
+					Cmap.put("Ccreated_uname", rsInnerDeep.getString("created_uname"));
+					Cmap.put("Ccomments", rsInnerDeep.getString("comments"));
+					Cmap.put("Ccreated_by", rsInnerDeep.getString("created_by"));
 
-						CjsonArray.put(Cmap);
+					if (rsInnerDeep.getString("user_id").equals(id) || rs.getString("user_id").equals(id)) {
+						Cmap.put("delete", "1");
 					}
-					
-					for (int i = 0; i < CjsonArray.length(); i++) {            
-						jsonArray.put(CjsonArray.get(i));
-						
-				    }
 
+					if (rsInnerDeep.getString("imgname").equals("")) {
+						Cmap.put("interviewExperienceCommentuserimgname", "/images/avatar.png");
+					} else {
+						Cmap.put("interviewExperienceCommentuserimgname",
+								"/uploads/" + rsInnerDeep.getString("imgname"));
+					}
 
-					jsonArray.put(map);
+					CjsonArray.put(Cmap);
+				}
+
+				for (int i = 0; i < CjsonArray.length(); i++) {
+					jsonArray.put(CjsonArray.get(i));
 
 				}
+
+				jsonArray.put(map);
+
+			}
 
 			con.close();
 
@@ -503,15 +526,4 @@ public class Notification {
 		return jsonArray.toString();
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
