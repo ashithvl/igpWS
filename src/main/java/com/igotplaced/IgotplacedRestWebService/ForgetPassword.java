@@ -62,8 +62,8 @@ public class ForgetPassword {
 				String to = email;
 
 				// Sender's email ID needs to be mentioned
-				final String from = "shrirambaabu0902@gmail.com";
-				final String password = "shreyaji12";
+				final String from = "igotplacedteam@gmail.com";
+				final String password = "igp@2017";
 				// Assuming you are sending email from localhost
 				String host = "smtp.gmail.com";
 
@@ -93,7 +93,7 @@ public class ForgetPassword {
 					// Set From: header field of the header.
 					message.setFrom(new InternetAddress(from));
 
-					message.setReplyTo(InternetAddress.parse("shrirambaabu0902@gmail.com"));
+					message.setReplyTo(InternetAddress.parse("igotplacedteam@gmail.com"));
 
 					// Set To: header field of the header.
 					message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
@@ -162,8 +162,8 @@ public class ForgetPassword {
 				String to = email;
 
 				// Sender's email ID needs to be mentioned
-				final String from = "shrirambaabu0902@gmail.com";
-				final String password = "shreyaji12";
+				final String from = "igotplacedteam@gmail.com";
+				final String password = "igp@2017";
 				// Assuming you are sending email from localhost
 				String host = "smtp.gmail.com";
 
@@ -193,7 +193,7 @@ public class ForgetPassword {
 					// Set From: header field of the header.
 					message.setFrom(new InternetAddress(from));
 
-					message.setReplyTo(InternetAddress.parse("shrirambaabu0902@gmail.com"));
+					message.setReplyTo(InternetAddress.parse("igotplacedteam@gmail.com"));
 
 					// Set To: header field of the header.
 					message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));

@@ -68,20 +68,23 @@ public class Notification {
 
 				while (rsInner.next()) {
 
-					if (rs.getString("Caption").equals("newevent")) {
-						map.put("post", rsInner.getString("fname") + " Added newEvent");
-					} else {
-						map.put("post", rsInner.getString("fname") + " Commented for your " + rs.getString("Caption"));
-					}
+					if (!rs.getString("user_id").equals(id)) {
 
-					map.put("fname", rsInner.getString("fname"));
-					if (rsInner.getString("imgname").equals("")) {
-						map.put("imgname", "/images/avatar.png");
-					} else {
-						map.put("imgname", "/uploads/" + rsInner.getString("imgname"));
+						if (rs.getString("Caption").equals("newevent")) {
+							map.put("post", rsInner.getString("fname") + " Added new Event");
+						} else {
+							map.put("post",
+									rsInner.getString("fname") + " Commented for your " + rs.getString("Caption"));
+						}
+
+						map.put("fname", rsInner.getString("fname"));
+						if (rsInner.getString("imgname").equals("")) {
+							map.put("imgname", "/images/avatar.png");
+						} else {
+							map.put("imgname", "/uploads/" + rsInner.getString("imgname"));
+						}
 					}
 				}
-
 				jsonArray.put(map);
 
 			}

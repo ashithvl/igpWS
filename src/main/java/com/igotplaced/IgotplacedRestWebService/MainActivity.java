@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import com.mysql.cj.api.jdbc.Statement;
 
@@ -102,7 +103,8 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
-					map.put("post", rsInner.getString("post").replaceAll("\\<.,*?\\>", ""));
+					map.put("post", Jsoup.parse(rsInner.getString("post")).text());
+
 					map.put("pid", rsInner.getString("pid"));
 					map.put("Industry", rsInner.getString("Industry"));
 					map.put("created_user", rsInner.getString("created_user"));
@@ -112,7 +114,7 @@ public class MainActivity {
 					map.put("created_uname", rsInner.getString("created_uname"));
 
 					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
-					System.out.println(companyName);
+					
 
 					if (companyName.equals("")) {
 						map.put("company_id", "");
@@ -120,11 +122,11 @@ public class MainActivity {
 						String companyRequest = "SELECT * FROM `company` where companyname=?";
 
 						PreparedStatement psCompany = con.prepareStatement(companyRequest);
-						 psCompany.setString(1,	companyName);
+						psCompany.setString(1, companyName);
 
 						ResultSet rsCompany = psCompany.executeQuery();
 
-						System.out.println(companyRequest);
+					
 						while (rsCompany.next()) {
 							map.put("company_id", rsCompany.getString("id"));
 
@@ -283,6 +285,41 @@ public class MainActivity {
 
 			}
 
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return jsonArray.toString();
+	}
+
+	@POST
+	@Path("/deletePostComment/{user_id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String deletePostComment(@PathParam("user_id") String user_id) {
+
+		try {
+
+		
+
+			jsonArray = new JSONArray();
+			newObject = new JSONObject();
+
+			map = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "delete  from `post_comm` where id=? ";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, user_id);
+			ps.executeUpdate();
+			
 			con.close();
 
 		} catch (
@@ -489,6 +526,43 @@ public class MainActivity {
 		return String.valueOf(result);
 
 	}
+	
+	
+	@POST
+	@Path("/deleteInterviewComment/{user_id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String deleteInterviewComment(@PathParam("user_id") String user_id) {
+
+		try {
+
+		
+
+			jsonArray = new JSONArray();
+			newObject = new JSONObject();
+
+			map = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "delete  from `interview_comm` where id=? ";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, user_id);
+			ps.executeUpdate();
+			
+			
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return jsonArray.toString();
+	}
 
 	@POST
 	@Path("/interviewComments")
@@ -663,7 +737,8 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
-					map.put("feedback", rsInner.getString("feedback").replaceAll("\\<.*?\\>", ""));
+					map.put("feedback", Jsoup.parse(rsInner.getString("feedback")).text());
+
 					map.put("industryname", rsInner.getString("industryname"));
 					map.put("interview_status", rsInner.getString("interview_status"));
 					map.put("industryname", rsInner.getString("industryname"));
@@ -673,8 +748,6 @@ public class MainActivity {
 					map.put("username", rsInner.getString("username"));
 					map.put("created_by", rsInner.getString("created_by"));
 
-					
-					
 					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
 					System.out.println(companyName);
 
@@ -684,7 +757,7 @@ public class MainActivity {
 						String companyRequest = "SELECT * FROM `company` where companyname=?";
 
 						PreparedStatement psCompany = con.prepareStatement(companyRequest);
-						 psCompany.setString(1,	companyName);
+						psCompany.setString(1, companyName);
 
 						ResultSet rsCompany = psCompany.executeQuery();
 
@@ -694,7 +767,7 @@ public class MainActivity {
 
 						}
 					}
-					
+
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
@@ -834,6 +907,43 @@ public class MainActivity {
 		return String.valueOf(result);
 
 	}
+	
+	@POST
+	@Path("/deleteQuestionComment/{user_id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String deleteQuestionComment(@PathParam("user_id") String user_id) {
+
+		try {
+
+			
+
+			jsonArray = new JSONArray();
+			newObject = new JSONObject();
+
+			map = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "delete  from `questn_comm` where id=? ";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, user_id);
+			ps.executeUpdate();
+		
+			
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return jsonArray.toString();
+	}
+
 
 	@GET
 	@Path("/questionsCommentList/{user_id}")
@@ -963,7 +1073,7 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
-					map.put("question", rsInner.getString("question").replaceAll("\\<.*?\\>", ""));
+					map.put("question", Jsoup.parse(rsInner.getString("question")).text());
 					map.put("category", rsInner.getString("category"));
 					map.put("industryname", rsInner.getString("industryname"));
 					map.put("companyname", rsInner.getString("companyname").replaceAll(",$", ""));
@@ -974,8 +1084,6 @@ public class MainActivity {
 					map.put("id", rsInner.getString("id"));
 					map.put("created_by", rsInner.getString("created_by"));
 
-	
-					
 					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
 					System.out.println(companyName);
 
@@ -985,7 +1093,7 @@ public class MainActivity {
 						String companyRequest = "SELECT * FROM `company` where companyname=?";
 
 						PreparedStatement psCompany = con.prepareStatement(companyRequest);
-						 psCompany.setString(1,	companyName);
+						psCompany.setString(1, companyName);
 
 						ResultSet rsCompany = psCompany.executeQuery();
 
@@ -1143,6 +1251,43 @@ public class MainActivity {
 
 	}
 
+	
+	@POST
+	@Path("/deleteEventComment/{user_id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String deleteEventComment(@PathParam("user_id") String user_id) {
+
+		try {
+
+			
+			jsonArray = new JSONArray();
+			newObject = new JSONObject();
+
+			map = new HashMap<String, String>();
+
+			con = Constants.ConnectionOpen();
+
+			String sql = "delete  from `event_comm` where id=? ";
+
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, user_id);
+			ps.executeUpdate();
+		
+			
+			con.close();
+
+		} catch (
+
+		Exception e) {
+
+			System.out.println(e);
+			e.printStackTrace();
+		}
+
+		return jsonArray.toString();
+	}
+	
+	
 	@GET
 	@Path("/eventCommentList/{user_id}")
 	@Produces(MediaType.TEXT_HTML)
@@ -1271,7 +1416,7 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
-					map.put("notes", rsInner.getString("notes").replaceAll("\\<.*?\\>", ""));
+					map.put("notes", Jsoup.parse(rsInner.getString("notes")).text());
 					map.put("eventname", rsInner.getString("eventname"));
 					map.put("datetime", rsInner.getString("datetime"));
 					map.put("eventtype", rsInner.getString("eventtype"));

@@ -1,21 +1,28 @@
 package com.igotplaced.IgotplacedRestWebService;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -24,11 +31,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.eclipse.persistence.internal.oxm.conversion.Base64;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import com.mysql.cj.api.jdbc.Statement;
 
@@ -36,7 +52,7 @@ import utils.Constants;
 
 @Path("/profileService")
 public class Profile {
-
+	ResultSet rsProfile;
 	Connection con = null;
 	JSONObject jsonObj = null;
 	JSONObject newObject = null;
@@ -44,6 +60,11 @@ public class Profile {
 	JSONArray jsonArrayCompany = null;
 	Map<String, String> map = null;
 	Map<String, String> mapCompany = null;
+
+	List<String> companyList = new ArrayList<>();
+	List<String> companyListTwo = new ArrayList<>();
+	List<String> companyListThree = new ArrayList<>();
+	JSONArray companyJSONArray = null;
 
 	@GET
 	@Path("/profile/{id}")
@@ -63,24 +84,24 @@ public class Profile {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, id);
 
-			ResultSet rs = ps.executeQuery();
+			rsProfile = ps.executeQuery();
 
-			while (rs.next()) {
+			while (rsProfile.next()) {
 
-				if (rs.getString("imgname").equals("")) {
+				if (rsProfile.getString("imgname").equals("")) {
 					map.put("imgname", "/images/avatar.png");
 				} else {
-					map.put("imgname", "/uploads/" + rs.getString("imgname"));
+					map.put("imgname", "/uploads/" + rsProfile.getString("imgname"));
 				}
-				map.put("fname", rs.getString("fname"));
-				map.put("department", rs.getString("department"));
-				map.put("college", rs.getString("college"));
-				map.put("industry1", rs.getString("industry1"));
-				map.put("company1", rs.getString("company1"));
-				map.put("industry2", rs.getString("industry2"));
-				map.put("company2", rs.getString("company2"));
-				map.put("industry3", rs.getString("industry3"));
-				map.put("company3", rs.getString("company3"));
+				map.put("fname", rsProfile.getString("fname"));
+				map.put("department", rsProfile.getString("department"));
+				map.put("college", rsProfile.getString("college"));
+				map.put("industry1", rsProfile.getString("industry1"));
+				map.put("company1", rsProfile.getString("company1"));
+				map.put("industry2", rsProfile.getString("industry2"));
+				map.put("company2", rsProfile.getString("company2"));
+				map.put("industry3", rsProfile.getString("industry3"));
+				map.put("company3", rsProfile.getString("company3"));
 
 				jsonArray.put(map);
 
@@ -131,28 +152,24 @@ public class Profile {
 				}
 
 				if (!rs.getString("company1").equals("")) {
-					Company1List = Arrays.asList(rs.getString("company1").split(","));
-					if (!Company1List.isEmpty()) {
-						company1 = Company1List.get(Company1List.size() - 1);
-					}
+
+					company1 = rs.getString("company1");
+				
+
 				}
 
-				if (!rs.getString("company1").equals("")) {
-					Company2List = Arrays.asList(rs.getString("company2").split(","));
+				if (!rs.getString("company2").equals("")) {
+					company2 = rs.getString("company2");
 
-					if (!Company2List.isEmpty()) {
-						company2 = Company2List.get(Company2List.size() - 1);
-					}
 				}
 
-				if (!rs.getString("company1").equals("")) {
-					Company3List = Arrays.asList(rs.getString("company2").split(","));
+				if (!rs.getString("company3").equals("")) {
+					company3 = rs.getString("company3");
 
-					if (!Company3List.isEmpty()) {
-						company3 = Company3List.get(Company3List.size() - 1);
-					}
 				}
 
+				
+				
 				map.put("fname", rs.getString("fname"));
 				map.put("department", rs.getString("department"));
 				map.put("college", rs.getString("college"));
@@ -193,49 +210,45 @@ public class Profile {
 			@FormParam("encodedImage") String encodedImage) {
 
 		int result = 0;
+		byte byteArray[] = Base64.base64Decode(encodedImage.getBytes());
 
-		String filePath = "E:\\Media Player\\" + id + ".png";
+		String filePath = "http://localhost:8080/uploads/" + id + ".png";
 
 		try {
 			FileOutputStream fos = new FileOutputStream(filePath);
 
-			byte byteArray[] = Base64.base64Decode(encodedImage.getBytes());
-
 			fos.write(byteArray);
-			System.out.println(fos);
 
 			fos.close();
+			
 		} catch (Exception e) {
 
 			e.printStackTrace();
 		}
 
-		/*
-		 * int rsLastGeneratedAutoIncrementId = 0; String sqlInner = null;
-		 * 
-		 * try {
-		 * 
-		 * con = Constants.ConnectionOpen();
-		 * 
-		 * DateTimeFormatter dtf =
-		 * DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"); LocalDateTime now
-		 * = LocalDateTime.now(); String dateTime = dtf.format(now);
-		 * 
-		 * sqlInner = "UPDATE `user_login` SET imgname=? WHERE id=?";
-		 * 
-		 * PreparedStatement psInner = con.prepareStatement(sqlInner);
-		 * 
-		 * psInner.setString(1, id+".png"); psInner.setString(2, id);
-		 * 
-		 * System.out.println(url);
-		 * 
-		 * 
-		 * if (psInner.executeUpdate() > 0) { result = 1; } con.close();
-		 * 
-		 * } catch (Exception e) { e.printStackTrace(); }
-		 */
+		String sqlInner = null;
 
-		return String.valueOf(encodedImage);
+		try {
+
+			con = Constants.ConnectionOpen();
+
+			sqlInner = "UPDATE `user_login` SET imgname=? WHERE id=?";
+
+			PreparedStatement psInner = con.prepareStatement(sqlInner);
+
+			psInner.setString(1, id + ".png");
+			psInner.setString(2, id);
+
+			if (psInner.executeUpdate() > 0) {
+				result = 1;
+			}
+			con.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return String.valueOf(result);
 	}
 
 	@POST
@@ -320,7 +333,7 @@ public class Profile {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				map.put("post", rs.getString("post").replaceAll("\\<.*?\\>", ""));
+				map.put("post", Jsoup.parse(rs.getString("post")).text());
 				map.put("pid", rs.getString("pid"));
 				map.put("post_created_user", rs.getString("created_user"));
 				map.put("created_by", rs.getString("created_by"));
@@ -346,15 +359,20 @@ public class Profile {
 					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
 
 					map.put("companyname", companyName);
+
 					map.put("created_uname", rsInner.getString("created_uname"));
 
-					String companyRequest = "SELECT * FROM `company` where companyname=?";
+					if (!companyName.isEmpty()) {
+						String companyRequest = "SELECT * FROM `company` where companyname=?";
 
-					PreparedStatement psCompany = con.prepareStatement(companyRequest);
-					psCompany.setString(1, rsInner.getString("companyname").replaceAll(",$", ""));
-					ResultSet rsCompany = psCompany.executeQuery();
-					while (rsCompany.next()) {
-						map.put("company_id", rsCompany.getString("id"));
+						PreparedStatement psCompany = con.prepareStatement(companyRequest);
+						psCompany.setString(1, rsInner.getString("companyname").replaceAll(",$", ""));
+						ResultSet rsCompany = psCompany.executeQuery();
+						while (rsCompany.next()) {
+							map.put("company_id", rsCompany.getString("id"));
+						}
+					} else {
+						map.put("company_id", "");
 					}
 
 					jsonArray.put(map);
@@ -450,7 +468,7 @@ public class Profile {
 
 			while (rs.next()) {
 
-				map.put("feedback", rs.getString("feedback").replaceAll("\\<.*?\\>", ""));
+				map.put("feedback", Jsoup.parse(rs.getString("feedback")).text());
 				map.put("interview_status", rs.getString("interview_status"));
 				map.put("created_by", rs.getString("created_by"));
 
@@ -481,14 +499,19 @@ public class Profile {
 				map.put("created_by", rs.getString("created_by"));
 				map.put("fid", rs.getString("id"));
 
-				String companyRequest = "SELECT * FROM `company` where companyname=?";
+				if (!companyInterview.isEmpty()) {
+					String companyRequest = "SELECT * FROM `company` where companyname=?";
 
-				PreparedStatement psCompany = con.prepareStatement(companyRequest);
-				psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
-				ResultSet rsCompany = psCompany.executeQuery();
-				while (rsCompany.next()) {
-					map.put("company_id", rsCompany.getString("id"));
+					PreparedStatement psCompany = con.prepareStatement(companyRequest);
+					psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
+					ResultSet rsCompany = psCompany.executeQuery();
+					while (rsCompany.next()) {
+						map.put("company_id", rsCompany.getString("id"));
+					}
+				} else {
+					map.put("company_id", "");
 				}
+
 				jsonArray.put(map);
 
 			}
@@ -579,7 +602,7 @@ public class Profile {
 
 			while (rs.next()) {
 
-				map.put("question", rs.getString("question").replaceAll("\\<.*?\\>", ""));
+				map.put("question", Jsoup.parse(rs.getString("question")).text());
 
 				if (rs.getString("imgname").equals("")) {
 					map.put("questionimgname", "/images/avatar.png");
@@ -590,17 +613,22 @@ public class Profile {
 				map.put("industryname", rs.getString("industryname"));
 				map.put("created_by", rs.getString("created_by"));
 				map.put("created_uname", rs.getString("created_uname"));
-				map.put("companyname",rs.getString("companyname").replaceAll(",$", ""));
+				map.put("companyname", rs.getString("companyname").replaceAll(",$", ""));
 				map.put("qid", rs.getString("id"));
 				map.put("created_user", rs.getString("created_user"));
 
-				String companyRequest = "SELECT * FROM `company` where companyname=?";
+				if (!rs.getString("companyname").replaceAll(",$", "").isEmpty()) {
+					String companyRequest = "SELECT * FROM `company` where companyname=?";
 
-				PreparedStatement psCompany = con.prepareStatement(companyRequest);
-				psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
-				ResultSet rsCompany = psCompany.executeQuery();
-				while (rsCompany.next()) {
-					map.put("company_id", rsCompany.getString("id"));
+					PreparedStatement psCompany = con.prepareStatement(companyRequest);
+					psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
+					ResultSet rsCompany = psCompany.executeQuery();
+					while (rsCompany.next()) {
+						map.put("company_id", rsCompany.getString("id"));
+					}
+
+				} else {
+					map.put("company_id", "");
 				}
 
 				jsonArray.put(map);
@@ -693,7 +721,7 @@ public class Profile {
 
 			while (rs.next()) {
 
-				map.put("eventname", rs.getString("eventname").replaceAll("\\<.*?\\>", ""));
+				map.put("eventname", Jsoup.parse(rs.getString("eventname")).text());
 
 				if (rs.getString("imgname").equals("")) {
 					map.put("eventimgname", "/images/avatar.png");
@@ -764,7 +792,7 @@ public class Profile {
 
 		try {
 
-			System.out.println(companyid);
+			
 
 			jsonArray = new JSONArray();
 			newObject = new JSONObject();
@@ -780,7 +808,7 @@ public class Profile {
 
 			ResultSet rs = ps.executeQuery();
 
-			System.out.println(sql);
+			
 			while (rs.next()) {
 				map.put("aboutus", rs.getString("aboutus").replaceAll("\\<.*?\\>", ""));
 				map.put("id", rs.getString("id"));
@@ -796,7 +824,6 @@ public class Profile {
 				}
 				jsonArray.put(map);
 
-				System.out.println(map);
 			}
 
 			con.close();
@@ -819,7 +846,7 @@ public class Profile {
 
 		try {
 
-			System.out.println(companyname);
+			
 
 			jsonArrayCompany = new JSONArray();
 
@@ -828,12 +855,12 @@ public class Profile {
 			con = Constants.ConnectionOpen();
 
 			String sql = "SELECT * FROM `company` WHERE companyname=?";
-			System.out.println(sql);
+			
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, companyname);
 
 			ResultSet rs = ps.executeQuery();
-			System.out.println(rs.getString("companywebsite"));
+			
 
 			while (rs.next()) {
 				map.put("aboutus", rs.getString("aboutus").replaceAll("\\<.*?\\>", ""));
@@ -850,7 +877,6 @@ public class Profile {
 				}
 				jsonArray.put(map);
 
-				System.out.println(map);
 			}
 
 			con.close();
@@ -889,26 +915,26 @@ public class Profile {
 			// ps.setString(1, userId);
 
 			ResultSet rs = ps.executeQuery();
-			System.out.println(sql);
+			
 			while (rs.next()) {
 				map.put("companyname", rs.getString("companyname").replace(",$", ""));
 				map.put("company_id", rs.getString("id"));
 				String companyNamePost = rs.getString("companyname").replace(",$", "");
 
-				sqlInner = "select * from `post` where companyname=?";
+				sqlInner = "select * from `post` where companyname LIKE  '%" + companyNamePost + "%'";
 
 				psInner = con.prepareStatement(sqlInner);
 
-				psInner.setString(1, companyNamePost);
+				// psInner.setString(1, companyNamePost);
 
 				ResultSet rsInner = psInner.executeQuery();
 
-				System.out.println(companyNamePost);
+				
 
 				while (rsInner.next()) {
 
 					map.put("pid", rsInner.getString("pid"));
-					map.put("post", rsInner.getString("post").replaceAll("\\<.*?\\>", ""));
+					map.put("post", Jsoup.parse(rsInner.getString("post")).text());
 					map.put("industry", rsInner.getString("industry"));
 					map.put("created_uname", rsInner.getString("created_uname"));
 					map.put("created_by", rsInner.getString("created_by"));
@@ -978,20 +1004,20 @@ public class Profile {
 				map.put("company_id", rs.getString("id"));
 				String companyNamePost = rs.getString("companyname").replace(",$", "");
 
-				sqlInner = "select * from `interview_exp` where companyname=?";
+				sqlInner = "select * from `interview_exp` where companyname LIKE  '%" + companyNamePost + "%'";
 
 				psInner = con.prepareStatement(sqlInner);
 
-				psInner.setString(1, companyNamePost);
+				// psInner.setString(1, companyNamePost);
 
 				ResultSet rsInner = psInner.executeQuery();
 
-				System.out.println(companyNamePost);
+				
 
 				while (rsInner.next()) {
 
 					map.put("id", rsInner.getString("id"));
-					map.put("feedback", rsInner.getString("feedback").replaceAll("\\<.*?\\>", ""));
+					map.put("feedback", Jsoup.parse(rsInner.getString("feedback")).text());
 					map.put("industryname", rsInner.getString("industryname"));
 					map.put("username", rsInner.getString("username"));
 					map.put("created_by", rsInner.getString("created_by"));
@@ -1055,32 +1081,30 @@ public class Profile {
 			// ps.setString(1, userId);
 
 			ResultSet rs = ps.executeQuery();
-			
+
 			while (rs.next()) {
 				map.put("companyname", rs.getString("companyname"));
 				map.put("company_id", rs.getString("id"));
 				String companyNamePost = rs.getString("companyname");
 				System.out.println(companyNamePost);
-				sqlInner = "select * from `questions` where companyname=?";
+				sqlInner = "select * from `questions` where companyname LIKE  '%" + companyNamePost + "%'";
 
 				psInner = con.prepareStatement(sqlInner);
 
-				psInner.setString(1, companyNamePost);
+				// psInner.setString(1, companyNamePost);
 
 				ResultSet rsInner = psInner.executeQuery();
 
-				
 
 				while (rsInner.next()) {
 
 					map.put("id", rsInner.getString("id"));
-					map.put("question", rsInner.getString("question").replaceAll("\\<.*?\\>", ""));
+					map.put("question", Jsoup.parse(rsInner.getString("question")).text());
 					map.put("industryname", rsInner.getString("industryname"));
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_uname", rsInner.getString("created_uname"));
 					map.put("created_by", rsInner.getString("created_by"));
-					
-					
+
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
 					PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
@@ -1145,25 +1169,25 @@ public class Profile {
 				map.put("company_id", rs.getString("id"));
 				String companyNamePost = rs.getString("companyname").replace(",$", "");
 
-				sqlInner = "select * from `events` where companyname=?";
+				sqlInner = "select * from `events` where companyname LIKE  '%" + companyNamePost + "%'";
 
 				psInner = con.prepareStatement(sqlInner);
 
-				psInner.setString(1, companyNamePost);
+				// psInner.setString(1, companyNamePost);
 
 				ResultSet rsInner = psInner.executeQuery();
 
-				System.out.println(companyNamePost);
+				
 
 				while (rsInner.next()) {
 
 					map.put("datetime", rsInner.getString("datetime"));
-					map.put("notes", rsInner.getString("notes"));
+					map.put("notes", Jsoup.parse(rsInner.getString("notes")).text());
 					map.put("location", rsInner.getString("location"));
 					map.put("eid", rsInner.getString("id"));
 					map.put("Industry", rsInner.getString("Industry"));
 					map.put("eventtype", rsInner.getString("eventtype"));
-					map.put("eventname", rsInner.getString("eventname"));
+					map.put("eventname", Jsoup.parse(rsInner.getString("eventname")).text());
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_uname", rsInner.getString("created_uname"));
 					map.put("created_by", rsInner.getString("created_by"));
