@@ -102,6 +102,12 @@ public class MainActivity {
 				ResultSet rsInner = psInner.executeQuery();
 
 				while (rsInner.next()) {
+					
+					
+					SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					Date datePost = readFormat.parse(rsInner.getString("created_by"));
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+					String postTime = dateFormat.format(datePost);
 
 					map.put("post", Jsoup.parse(rsInner.getString("post")).text());
 
@@ -110,11 +116,12 @@ public class MainActivity {
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("companyname", rsInner.getString("companyname").replaceAll(",$", ""));
 					map.put("created_uname", rsInner.getString("created_uname"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by", postTime);
 					map.put("created_uname", rsInner.getString("created_uname"));
 
-					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
 					
+
+					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
 
 					if (companyName.equals("")) {
 						map.put("company_id", "");
@@ -126,7 +133,6 @@ public class MainActivity {
 
 						ResultSet rsCompany = psCompany.executeQuery();
 
-					
 						while (rsCompany.next()) {
 							map.put("company_id", rsCompany.getString("id"));
 
@@ -305,8 +311,6 @@ public class MainActivity {
 
 		try {
 
-		
-
 			jsonArray = new JSONArray();
 			newObject = new JSONObject();
 
@@ -319,7 +323,7 @@ public class MainActivity {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, user_id);
 			ps.executeUpdate();
-			
+
 			con.close();
 
 		} catch (
@@ -526,16 +530,13 @@ public class MainActivity {
 		return String.valueOf(result);
 
 	}
-	
-	
+
 	@POST
 	@Path("/deleteInterviewComment/{user_id}")
 	@Produces(MediaType.TEXT_HTML)
 	public String deleteInterviewComment(@PathParam("user_id") String user_id) {
 
 		try {
-
-		
 
 			jsonArray = new JSONArray();
 			newObject = new JSONObject();
@@ -549,8 +550,7 @@ public class MainActivity {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, user_id);
 			ps.executeUpdate();
-			
-			
+
 			con.close();
 
 		} catch (
@@ -737,6 +737,12 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
+					
+					SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					Date datePost = readFormat.parse(rsInner.getString("created_by"));
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+					String postTime = dateFormat.format(datePost);
+					
 					map.put("feedback", Jsoup.parse(rsInner.getString("feedback")).text());
 
 					map.put("industryname", rsInner.getString("industryname"));
@@ -746,10 +752,9 @@ public class MainActivity {
 					map.put("id", rsInner.getString("id"));
 					map.put("user_id", rsInner.getString("user_id"));
 					map.put("username", rsInner.getString("username"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by", postTime);
 
 					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
-					System.out.println(companyName);
 
 					if (companyName.equals("")) {
 						map.put("company_id", "");
@@ -761,7 +766,6 @@ public class MainActivity {
 
 						ResultSet rsCompany = psCompany.executeQuery();
 
-						System.out.println(companyRequest);
 						while (rsCompany.next()) {
 							map.put("company_id", rsCompany.getString("id"));
 
@@ -907,15 +911,13 @@ public class MainActivity {
 		return String.valueOf(result);
 
 	}
-	
+
 	@POST
 	@Path("/deleteQuestionComment/{user_id}")
 	@Produces(MediaType.TEXT_HTML)
 	public String deleteQuestionComment(@PathParam("user_id") String user_id) {
 
 		try {
-
-			
 
 			jsonArray = new JSONArray();
 			newObject = new JSONObject();
@@ -929,8 +931,7 @@ public class MainActivity {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, user_id);
 			ps.executeUpdate();
-		
-			
+
 			con.close();
 
 		} catch (
@@ -943,7 +944,6 @@ public class MainActivity {
 
 		return jsonArray.toString();
 	}
-
 
 	@GET
 	@Path("/questionsCommentList/{user_id}")
@@ -1073,6 +1073,11 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
+					SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					Date datePost = readFormat.parse(rsInner.getString("created_by"));
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+					String postTime = dateFormat.format(datePost);
+					
 					map.put("question", Jsoup.parse(rsInner.getString("question")).text());
 					map.put("category", rsInner.getString("category"));
 					map.put("industryname", rsInner.getString("industryname"));
@@ -1082,10 +1087,9 @@ public class MainActivity {
 					map.put("created_uname", rsInner.getString("created_uname"));
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("id", rsInner.getString("id"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by", postTime);
 
 					String companyName = rsInner.getString("companyname").replaceAll(",$", "");
-					System.out.println(companyName);
 
 					if (companyName.equals("")) {
 						map.put("company_id", "");
@@ -1097,7 +1101,6 @@ public class MainActivity {
 
 						ResultSet rsCompany = psCompany.executeQuery();
 
-						System.out.println(companyRequest);
 						while (rsCompany.next()) {
 							map.put("company_id", rsCompany.getString("id"));
 
@@ -1251,7 +1254,6 @@ public class MainActivity {
 
 	}
 
-	
 	@POST
 	@Path("/deleteEventComment/{user_id}")
 	@Produces(MediaType.TEXT_HTML)
@@ -1259,7 +1261,6 @@ public class MainActivity {
 
 		try {
 
-			
 			jsonArray = new JSONArray();
 			newObject = new JSONObject();
 
@@ -1272,8 +1273,7 @@ public class MainActivity {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, user_id);
 			ps.executeUpdate();
-		
-			
+
 			con.close();
 
 		} catch (
@@ -1286,8 +1286,7 @@ public class MainActivity {
 
 		return jsonArray.toString();
 	}
-	
-	
+
 	@GET
 	@Path("/eventCommentList/{user_id}")
 	@Produces(MediaType.TEXT_HTML)
@@ -1416,6 +1415,12 @@ public class MainActivity {
 
 				while (rsInner.next()) {
 
+					
+					SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					Date datePost = readFormat.parse(rsInner.getString("created_by"));
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+					String postTime = dateFormat.format(datePost);
+					
 					map.put("notes", Jsoup.parse(rsInner.getString("notes")).text());
 					map.put("eventname", rsInner.getString("eventname"));
 					map.put("datetime", rsInner.getString("datetime"));
@@ -1426,7 +1431,7 @@ public class MainActivity {
 					map.put("companyname", rsInner.getString("companyname").replaceAll(",$", ""));
 
 					map.put("created_user", rsInner.getString("created_user"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by", postTime);
 					map.put("created_uname", rsInner.getString("created_uname"));
 
 					String companyRequest = "SELECT * FROM `company` where companyname=?";

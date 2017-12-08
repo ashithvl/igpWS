@@ -46,7 +46,7 @@ public class Register {
 			@FormParam("year") String year, @FormParam("colg") String colg, @FormParam("dept") String dept,
 			@FormParam("check") String check) {
 
-		int result = 0;
+		String result = "";
 		int rsLastGeneratedAutoIncrementId = 0;
 
 		try {
@@ -61,8 +61,12 @@ public class Register {
 			ResultSet rs = ps.executeQuery();
 
 			if (rs.next()) {
-
-				return String.valueOf(result);
+				if(rs.getString("password").equals("")){
+					result = rs.getString("id") + "," + "FALSE"+","+"Yes" + "," + rs.getString("interest");
+				}else{
+					result = rs.getString("id") + "," + "FALSE"+","+"No";
+				}
+				return result;
 
 			} else {
 
@@ -94,7 +98,7 @@ public class Register {
 					rsLastGeneratedAutoIncrementId = rsInner.getInt(1);
 				}
 
-				result = rsLastGeneratedAutoIncrementId;
+				result = rsLastGeneratedAutoIncrementId + "," + "TRUE"+","+"Create";
 
 			}
 
@@ -103,79 +107,80 @@ public class Register {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		try {
 			con = Constants.ConnectionOpen();
 
-				
-				String clickHere = "http://www.igotplaced.com";
+			String clickHere = "http://www.igotplaced.com";
 
-				// Recipient's email ID needs to be mentioned.
-				String to = email;
+			// Recipient's email ID needs to be mentioned.
+			String to = email;
 
-				// Sender's email ID needs to be mentioned
-				final String from = "igotplacedteam@gmail.com";
-				final String password = "igp@2017";
-				// Assuming you are sending email from localhost
-				String host = "smtp.gmail.com";
+			// Sender's email ID needs to be mentioned
+			final String from = "igotplacedteam@gmail.com";
+			final String password = "igp@2017";
+			// Assuming you are sending email from localhost
+			String host = "smtp.gmail.com";
 
-				// Get system properties
-				Properties properties = System.getProperties();
-				properties.put("mail.smtp.host", host); // SMTP Host
-				properties.put("mail.smtp.port", "587");
-				properties.put("mail.smtp.auth", "true"); // enable
-															// authentication
-				properties.put("mail.smtp.starttls.enable", "true"); // enable
-																		// STARTTLS
+			// Get system properties
+			Properties properties = System.getProperties();
+			properties.put("mail.smtp.host", host); // SMTP Host
+			properties.put("mail.smtp.port", "587");
+			properties.put("mail.smtp.auth", "true"); // enable
+														// authentication
+			properties.put("mail.smtp.starttls.enable", "true"); // enable
+																	// STARTTLS
 
-				// Setup mail server
-				// properties.setProperty("mail.smtp.host", host);
+			// Setup mail server
+			// properties.setProperty("mail.smtp.host", host);
 
-				// Get the default Session object.
-				Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(from, password);
-					}
-				});
-
-				try {
-					// Create a default MimeMessage object.
-					MimeMessage message = new MimeMessage(session);
-
-					// Set From: header field of the header.
-					message.setFrom(new InternetAddress(from));
-
-					message.setReplyTo(InternetAddress.parse("igotplacedteam@gmail.com"));
-
-					// Set To: header field of the header.
-					message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-					// Set Subject: header field
-					message.setSubject("Welcome to IgotPlaced.");
-
-					// Send the actual HTML message, as big as you like
-					message.setContent("<html><body><h1 style='color:DarkTurquoise ;'>You are Part Of the Community Now.</h1><p>Welcome! we are glad you are here</p><p><b>Here is how you can socialize and get placed!</b></p><h4 style='color:DarkTurquoise ;'>&nbsp;&nbsp;&nbsp;&nbsp;1. New post.</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Share what is on your mind related to placement.</p><h4 style='color:Orchid ;'>&nbsp;&nbsp;&nbsp;&nbsp;2. Interview Experiences.</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Did You Recently Attend A Placement Drive, Share Your Experience Here!</p><h4 style='color:YellowGreen;''>&nbsp;&nbsp;&nbsp;&nbsp;3. Events.</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Share what is on your mind related to placement.</p><h4 style='color:DarkOrange ;'>&nbsp;&nbsp;&nbsp;&nbsp;4.Questions.</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Do You Have An Aptitude Question Or An Interview Question Share And Discuss Here!</p><style>a{color:white}p.ex1 { margin-left: 4cm;}</style><p class='ex1'  align='start'><a  style='background-color:CornflowerBlue' href='http://www.igotplaced.com/'>&nbsp;&nbsp;&nbsp;&nbsp;www.igotplaced.com&nbsp;&nbsp;&nbsp;&nbsp;</a></p></body></html>","text/html");
-
-					Transport transport = session.getTransport("smtp");
-					transport.connect(host, from, password);
-					transport.send(message);
-					transport.close();
-					// Send message
-					// Transport.send(message);
-
-					System.out.println("Sent message successfully....");
-				} catch (MessagingException mex) {
-					mex.printStackTrace();
-					
+			// Get the default Session object.
+			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(from, password);
 				}
+			});
 
-				con.close();
-			
+			try {
+				// Create a default MimeMessage object.
+				MimeMessage message = new MimeMessage(session);
+
+				// Set From: header field of the header.
+				message.setFrom(new InternetAddress(from));
+
+				message.setReplyTo(InternetAddress.parse("igotplacedteam@gmail.com"));
+
+				// Set To: header field of the header.
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+				// Set Subject: header field
+				message.setSubject("Welcome to IgotPlaced.");
+
+				// Send the actual HTML message, as big as you like
+				message.setContent(
+						"<html><body><h1 style='color:DarkTurquoise ;'>You are Part Of the Community Now.</h1><p>Welcome! we are glad you are here</p><p><b>Here is how you can socialize and get placed!</b></p><h4 style='color:DarkTurquoise ;'>&nbsp;&nbsp;&nbsp;&nbsp;1. New post.</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Share what is on your mind related to placement.</p><h4 style='color:Orchid ;'>&nbsp;&nbsp;&nbsp;&nbsp;2. Interview Experiences.</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Did You Recently Attend A Placement Drive, Share Your Experience Here!</p><h4 style='color:YellowGreen;''>&nbsp;&nbsp;&nbsp;&nbsp;3. Events.</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Share what is on your mind related to placement.</p><h4 style='color:DarkOrange ;'>&nbsp;&nbsp;&nbsp;&nbsp;4.Questions.</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Do You Have An Aptitude Question Or An Interview Question Share And Discuss Here!</p><style>a{color:white}p.ex1 { margin-left: 4cm;}</style><p class='ex1'  align='start'><a  style='background-color:CornflowerBlue' href='http://www.igotplaced.com/'>&nbsp;&nbsp;&nbsp;&nbsp;www.igotplaced.com&nbsp;&nbsp;&nbsp;&nbsp;</a></p></body></html>",
+						"text/html");
+
+				Transport transport = session.getTransport("smtp");
+				transport.connect(host, from, password);
+				transport.send(message);
+				transport.close();
+				// Send message
+				// Transport.send(message);
+
+				System.out.println("Sent message successfully....");
+			} catch (MessagingException mex) {
+				mex.printStackTrace();
+
+			}
+
+			con.close();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return String.valueOf(result);
+		return result;
 	}
 
 	@POST

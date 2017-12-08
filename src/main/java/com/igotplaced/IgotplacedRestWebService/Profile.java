@@ -333,10 +333,16 @@ public class Profile {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
+				
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
+				
 				map.put("post", Jsoup.parse(rs.getString("post")).text());
 				map.put("pid", rs.getString("pid"));
 				map.put("post_created_user", rs.getString("created_user"));
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by", postTime);
 				map.put("pid", rs.getString("pid"));
 
 				if (rs.getString("imgname").equals("")) {
@@ -490,13 +496,17 @@ public class Profile {
 					}
 
 				}
-
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
+				
 				map.put("industryname", rs.getString("industryname"));
 				map.put("user_id", rs.getString("user_id"));
 				String companyInterview = rs.getString("companyname").replaceAll(",$", "");
 				map.put("companyname", companyInterview);
 				map.put("username", rs.getString("username"));
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by", postTime);
 				map.put("fid", rs.getString("id"));
 
 				if (!companyInterview.isEmpty()) {
@@ -610,8 +620,14 @@ public class Profile {
 					map.put("questionimgname", "/uploads/" + rs.getString("imgname"));
 				}
 
+				
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
+				
 				map.put("industryname", rs.getString("industryname"));
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by",postTime);
 				map.put("created_uname", rs.getString("created_uname"));
 				map.put("companyname", rs.getString("companyname").replaceAll(",$", ""));
 				map.put("qid", rs.getString("id"));
@@ -728,6 +744,12 @@ public class Profile {
 				} else {
 					map.put("eventimgname", "/uploads/" + rs.getString("imgname"));
 				}
+				
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
+				
 
 				map.put("datetime", rs.getString("datetime"));
 				map.put("notes", rs.getString("notes"));
@@ -737,7 +759,7 @@ public class Profile {
 				map.put("eventtype", rs.getString("eventtype"));
 				map.put("created_user", rs.getString("created_user"));
 				map.put("created_uname", rs.getString("created_uname"));
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by", postTime);
 				map.put("companyname", rs.getString("companyname"));
 				String countSql = "SELECT * FROM `events` WHERE id=?";
 
@@ -933,11 +955,16 @@ public class Profile {
 
 				while (rsInner.next()) {
 
+					SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					Date datePost = readFormat.parse(rsInner.getString("created_by"));
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+					String postTime = dateFormat.format(datePost);
+					
 					map.put("pid", rsInner.getString("pid"));
 					map.put("post", Jsoup.parse(rsInner.getString("post")).text());
 					map.put("industry", rsInner.getString("industry"));
 					map.put("created_uname", rsInner.getString("created_uname"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by",postTime);
 					map.put("created_user", rsInner.getString("created_user"));
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
@@ -998,7 +1025,6 @@ public class Profile {
 			// ps.setString(1, userId);
 
 			ResultSet rs = ps.executeQuery();
-			System.out.println(sql);
 			while (rs.next()) {
 				map.put("companyname", rs.getString("companyname").replace(",$", ""));
 				map.put("company_id", rs.getString("id"));
@@ -1016,11 +1042,16 @@ public class Profile {
 
 				while (rsInner.next()) {
 
+					SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					Date datePost = readFormat.parse(rsInner.getString("created_by"));
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+					String postTime = dateFormat.format(datePost);
+					
 					map.put("id", rsInner.getString("id"));
 					map.put("feedback", Jsoup.parse(rsInner.getString("feedback")).text());
 					map.put("industryname", rsInner.getString("industryname"));
 					map.put("username", rsInner.getString("username"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by",postTime);
 					map.put("user_id", rsInner.getString("user_id"));
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
@@ -1086,7 +1117,6 @@ public class Profile {
 				map.put("companyname", rs.getString("companyname"));
 				map.put("company_id", rs.getString("id"));
 				String companyNamePost = rs.getString("companyname");
-				System.out.println(companyNamePost);
 				sqlInner = "select * from `questions` where companyname LIKE  '%" + companyNamePost + "%'";
 
 				psInner = con.prepareStatement(sqlInner);
@@ -1097,13 +1127,18 @@ public class Profile {
 
 
 				while (rsInner.next()) {
+					
+					SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					Date datePost = readFormat.parse(rsInner.getString("created_by"));
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+					String postTime = dateFormat.format(datePost);
 
 					map.put("id", rsInner.getString("id"));
 					map.put("question", Jsoup.parse(rsInner.getString("question")).text());
 					map.put("industryname", rsInner.getString("industryname"));
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_uname", rsInner.getString("created_uname"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by",postTime);
 
 					String sqlInnerDeep = "select * from `user_login` where id=?";
 
@@ -1163,7 +1198,6 @@ public class Profile {
 			// ps.setString(1, userId);
 
 			ResultSet rs = ps.executeQuery();
-			System.out.println(sql);
 			while (rs.next()) {
 				map.put("companyname", rs.getString("companyname").replace(",$", ""));
 				map.put("company_id", rs.getString("id"));
@@ -1180,6 +1214,11 @@ public class Profile {
 				
 
 				while (rsInner.next()) {
+					
+					SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					Date datePost = readFormat.parse(rsInner.getString("created_by"));
+					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+					String postTime = dateFormat.format(datePost);
 
 					map.put("datetime", rsInner.getString("datetime"));
 					map.put("notes", Jsoup.parse(rsInner.getString("notes")).text());
@@ -1190,7 +1229,7 @@ public class Profile {
 					map.put("eventname", Jsoup.parse(rsInner.getString("eventname")).text());
 					map.put("created_user", rsInner.getString("created_user"));
 					map.put("created_uname", rsInner.getString("created_uname"));
-					map.put("created_by", rsInner.getString("created_by"));
+					map.put("created_by", postTime);
 
 					String countSql = "SELECT * FROM `events` WHERE id=?";
 

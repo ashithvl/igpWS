@@ -20,16 +20,15 @@ import org.json.JSONObject;
 
 public class Constants {
 
+	private final static String url =
+			 "jdbc:mysql://localhost:3306/cogentin_igotplaced";
+		private final static String user = "root";
+			 private final static String pass = "";
 	/*private final static String url =
 			 "jdbc:mysql://localhost:3306/servicet_cogentin_igotplaced?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
 		private final static String user = "servicet_igp";
 			 private final static String pass = "{5Kx5ai4Ey(7";*/
-			
-			 
-	final static String url = "jdbc:mysql://localhost:3306/cogentin_igotplaced";
-	final static String user = "root";
-	final static String pass = "";
-			 
+				
 	static Connection con = null;
 
 	public static Connection ConnectionOpen() {

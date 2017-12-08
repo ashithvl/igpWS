@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import utils.Constants;
 
@@ -197,14 +198,19 @@ public class AutoCompleteValue {
 
 						map = new HashMap<String, String>();
 						jsonArray = new JSONArray();
+						
+						SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						Date datePost = readFormat.parse(rspost.getString("created_by"));
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+						String postTime = dateFormat.format(datePost);
 
-						map.put("post", rspost.getString("post").replaceAll("\\<.*?\\>", ""));
+						map.put("post", Jsoup.parse(rspost.getString("post")).text());
 						map.put("pid", rspost.getString("pid"));
 						map.put("Industry", rspost.getString("Industry"));
 						map.put("companyname", rspost.getString("companyname").replaceAll(",$", ""));
 						map.put("created_user", rspost.getString("created_user"));
 						map.put("created_uname", rspost.getString("created_uname"));
-						map.put("created_by", rspost.getString("created_by"));
+						map.put("created_by", postTime);
 						map.put("created_uname", rspost.getString("created_uname"));
 
 						String companyRequest = "SELECT * FROM `company` where companyname=?";
@@ -253,8 +259,13 @@ public class AutoCompleteValue {
 
 						mapInterview = new HashMap<String, String>();
 						jsonArrayInterview = new JSONArray();
+						
+						SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						Date datePost = readFormat.parse(rsinterview.getString("created_by"));
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+						String postTime = dateFormat.format(datePost);
 
-						mapInterview.put("feedback", rsinterview.getString("feedback").replaceAll("\\<.*?\\>", ""));
+						mapInterview.put("feedback", Jsoup.parse(rsinterview.getString("feedback")).text());
 						mapInterview.put("industryname", rsinterview.getString("industryname"));
 						mapInterview.put("interview_status", rsinterview.getString("interview_status"));
 						mapInterview.put("industryname", rsinterview.getString("industryname"));
@@ -262,7 +273,7 @@ public class AutoCompleteValue {
 						mapInterview.put("id", rsinterview.getString("id"));
 						mapInterview.put("user_id", rsinterview.getString("user_id"));
 						mapInterview.put("username", rsinterview.getString("username"));
-						mapInterview.put("created_by", rsinterview.getString("created_by"));
+						mapInterview.put("created_by",postTime);
 
 						String companyRequest = "SELECT * FROM `company` where companyname=?";
 
@@ -310,8 +321,13 @@ public class AutoCompleteValue {
 					while (rsquestions.next()) {
 						jsonArrayQuestions = new JSONArray();
 						mapQuestions = new HashMap<String, String>();
+						
+						SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						Date datePost = readFormat.parse(rsquestions.getString("created_by"));
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+						String postTime = dateFormat.format(datePost);
 
-						mapQuestions.put("question", rsquestions.getString("question").replaceAll("\\<.*?\\>", ""));
+						mapQuestions.put("question", Jsoup.parse(rsquestions.getString("question")).text());
 						mapQuestions.put("category", rsquestions.getString("category"));
 						mapQuestions.put("industryname", rsquestions.getString("industryname"));
 						mapQuestions.put("companyname", rsquestions.getString("companyname").replaceAll(",$", ""));
@@ -320,7 +336,7 @@ public class AutoCompleteValue {
 						mapQuestions.put("created_uname", rsquestions.getString("created_uname"));
 						mapQuestions.put("created_user", rsquestions.getString("created_user"));
 						mapQuestions.put("id", rsquestions.getString("id"));
-						mapQuestions.put("created_by", rsquestions.getString("created_by"));
+						mapQuestions.put("created_by", postTime);
 
 						String companyRequest = "SELECT * FROM `company` where companyname=?";
 
@@ -369,7 +385,12 @@ public class AutoCompleteValue {
 						jsonArrayEvents = new JSONArray();
 						mapEvents = new HashMap<String, String>();
 
-						mapEvents.put("notes", rsevents.getString("notes").replaceAll("\\<.*?\\>", ""));
+						SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						Date datePost = readFormat.parse(rsevents.getString("created_by"));
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+						String postTime = dateFormat.format(datePost);
+						
+						mapEvents.put("notes", Jsoup.parse(rsevents.getString("notes")).text());
 						mapEvents.put("eventname", rsevents.getString("eventname"));
 						mapEvents.put("datetime", rsevents.getString("datetime"));
 						mapEvents.put("eventtype", rsevents.getString("eventtype"));
@@ -378,7 +399,7 @@ public class AutoCompleteValue {
 						mapEvents.put("Industry", rsevents.getString("Industry"));
 						mapEvents.put("companyname", rsevents.getString("companyname").replaceAll(",$", ""));
 						mapEvents.put("created_user", rsevents.getString("created_user"));
-						mapEvents.put("created_by", rsevents.getString("created_by"));
+						mapEvents.put("created_by",postTime);
 						mapEvents.put("created_uname", rsevents.getString("created_uname"));
 
 						String companyRequest = "SELECT * FROM `company` where companyname=?";

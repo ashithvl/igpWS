@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import utils.Constants;
 
@@ -54,8 +55,12 @@ public class Notification {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
 
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by", postTime);
 				map.put("ids", rs.getString("ids"));
 				map.put("Caption", rs.getString("Caption"));
 
@@ -134,12 +139,17 @@ public class Notification {
 
 			while (rs.next()) {
 
-				map.put("post", rs.getString("post").replaceAll("\\<.*?\\>", ""));
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
+
+				map.put("post", Jsoup.parse(rs.getString("post")).text());
 				map.put("Industry", rs.getString("Industry"));
 				map.put("companyname", rs.getString("companyname").replaceAll(",$", ""));
 				map.put("created_user", rs.getString("created_user"));
 				map.put("created_uname", rs.getString("created_uname"));
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by", postTime);
 				map.put("pid", id);
 
 				if (rs.getString("imgname").equals("")) {
@@ -232,16 +242,21 @@ public class Notification {
 
 			while (rs.next()) {
 
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
+
 				map.put("eventname", rs.getString("eventname"));
 				map.put("datetime", rs.getString("datetime"));
 				map.put("eventtype", rs.getString("eventtype"));
 				map.put("location", rs.getString("location"));
-				map.put("notes", rs.getString("notes").replaceAll("\\<.*?\\>", ""));
+				map.put("notes", Jsoup.parse(rs.getString("notes")).text());
 				map.put("id", rs.getString("id"));
 				map.put("Industry", rs.getString("Industry"));
 				// map.put("companyname", rs.getString("companyname"));
 				map.put("created_uname", rs.getString("created_uname"));
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by", postTime);
 
 				if (rs.getString("imgname").equals("")) {
 					map.put("imgname", "/images/avatar.png");
@@ -270,11 +285,7 @@ public class Notification {
 
 				ResultSet rsInner = psInner.executeQuery();
 
-				while (rsInner.next()) {
-
-					map.put("reg_count", "" + String.valueOf(rsInner.getRow()) + " People going");
-
-				}
+				map.put("reg_count", "" + String.valueOf(rsInner.getRow()) + " People going");
 
 				String eventDate = rs.getString("datetime");
 
@@ -360,29 +371,38 @@ public class Notification {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
 
-				map.put("question", rs.getString("question").replaceAll("\\<.*?\\>", ""));
+				map.put("question", Jsoup.parse(rs.getString("question")).text());
 				map.put("industryname", rs.getString("industryname"));
 				map.put("companyname", rs.getString("companyname").replaceAll(",$", ""));
 				map.put("qid", id);
 				map.put("created_uname", rs.getString("created_uname"));
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by", postTime);
 
 				if (rs.getString("imgname").equals("")) {
 					map.put("imgname", "/images/avatar.png");
 				} else {
 					map.put("imgname", "/uploads/" + rs.getString("imgname"));
 				}
+				String ComP = rs.getString("companyname").replaceAll(",$", "");
 
-				String companyRequest = "SELECT * FROM `company` where companyname=?";
+				if (!ComP.equals("Select Company")) {
 
-				PreparedStatement psCompany = con.prepareStatement(companyRequest);
-				psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
-				ResultSet rsCompany = psCompany.executeQuery();
-				while (rsCompany.next()) {
-					map.put("company_id", rsCompany.getString("id"));
+					String companyRequest = "SELECT * FROM `company` where companyname=?";
+
+					PreparedStatement psCompany = con.prepareStatement(companyRequest);
+					psCompany.setString(1, rs.getString("companyname").replaceAll(",$", ""));
+					ResultSet rsCompany = psCompany.executeQuery();
+					while (rsCompany.next()) {
+						map.put("company_id", rsCompany.getString("id"));
+					}
+				}else{
+					map.put("company_id", "");
 				}
-
 				String sqlInnerDeep = "SELECT a.id id,a.qid qid,a.comments comments,a.user_id user_id,a.created_by created_by,a.created_uname created_uname,b.imgname imgname FROM questn_comm as a INNER JOIN user_login as b ON a.user_id=b.id AND a.qid=?";
 				PreparedStatement psInnerDeep = con.prepareStatement(sqlInnerDeep);
 				psInnerDeep.setString(1, id);
@@ -456,12 +476,16 @@ public class Notification {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
+				SimpleDateFormat readFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				Date datePost = readFormat.parse(rs.getString("created_by"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm aa");
+				String postTime = dateFormat.format(datePost);
 
-				map.put("feedback", rs.getString("feedback").replaceAll("\\<.*?\\>", ""));
+				map.put("feedback", Jsoup.parse(rs.getString("feedback")).text());
 				map.put("interview_status", rs.getString("interview_status"));
 				map.put("companyname", rs.getString("companyname"));
 				map.put("industryname", rs.getString("industryname"));
-				map.put("created_by", rs.getString("created_by"));
+				map.put("created_by", postTime);
 				map.put("username", rs.getString("username"));
 				map.put("user_id", rs.getString("user_id"));
 
